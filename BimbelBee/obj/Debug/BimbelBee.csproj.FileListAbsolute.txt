@@ -1,0 +1,15 @@
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.AssemblyReference.cache
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Mapel.resources
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Properties.Resources.resources
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.GenerateResource.cache
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.CoreCompileInputs.cache
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.formSiswa.resources
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\bin\Debug\BimbelBee.exe.config
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\bin\Debug\BimbelBee.exe
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\bin\Debug\BimbelBee.pdb
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.exe
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.pdb
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.pendaftaran.resources
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Tutor.resources
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.login.resources
+D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.dashboard.resources
