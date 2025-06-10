@@ -404,5 +404,10 @@ namespace BimbelBee
 
             AnalyzeQueryPerformance(heavyQuery);
         }
+
+        private void txtTotalBayar_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

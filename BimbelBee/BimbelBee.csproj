@@ -65,11 +65,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cobacobaDataset.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>cobacobaDataset.xsd</DependentUpon>
-    </Compile>
     <Compile Include="daftarDataset3.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -176,17 +171,6 @@
     <EmbeddedResource Include="Tutor.resx">
       <DependentUpon>Tutor.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="cobacobaDataset.xsc">
-      <DependentUpon>cobacobaDataset.xsd</DependentUpon>
-    </None>
-    <None Include="cobacobaDataset.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>cobacobaDataset.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="cobacobaDataset.xss">
-      <DependentUpon>cobacobaDataset.xsd</DependentUpon>
-    </None>
     <None Include="daftarDataset3.xsc">
       <DependentUpon>daftarDataset3.xsd</DependentUpon>
     </None>

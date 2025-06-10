@@ -181,6 +181,7 @@
             this.txtTotalBayar.Name = "txtTotalBayar";
             this.txtTotalBayar.Size = new System.Drawing.Size(415, 26);
             this.txtTotalBayar.TabIndex = 30;
+            this.txtTotalBayar.TextChanged += new System.EventHandler(this.txtTotalBayar_TextChanged);
             // 
             // txtIDMapel
             // 
