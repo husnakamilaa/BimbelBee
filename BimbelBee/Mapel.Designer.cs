@@ -29,13 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnBack = new System.Windows.Forms.Button();
             this.dgvMapel = new System.Windows.Forms.DataGridView();
             this.txtIDmapel = new System.Windows.Forms.TextBox();
-            this.txtMapel = new System.Windows.Forms.TextBox();
-            this.txtTingkat = new System.Windows.Forms.TextBox();
-            this.txtRuangan = new System.Windows.Forms.TextBox();
-            this.txtDurasi = new System.Windows.Forms.TextBox();
-            this.txtHarikursus = new System.Windows.Forms.TextBox();
             this.txtWaktukursus = new System.Windows.Forms.TextBox();
             this.txtHarga = new System.Windows.Forms.TextBox();
             this.txtIDTutor = new System.Windows.Forms.TextBox();
@@ -52,7 +48,13 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.btnEditMapel = new System.Windows.Forms.Button();
-            this.btnBack = new System.Windows.Forms.Button();
+            this.cbMapel = new System.Windows.Forms.ComboBox();
+            this.cbTingkat = new System.Windows.Forms.ComboBox();
+            this.cbDurasi = new System.Windows.Forms.ComboBox();
+            this.cbRuangan = new System.Windows.Forms.ComboBox();
+            this.cbHariKursus = new System.Windows.Forms.ComboBox();
+            this.btnAnalyze = new System.Windows.Forms.Button();
+            this.lblMessageMapel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMapel)).BeginInit();
             this.SuspendLayout();
@@ -67,15 +69,26 @@
             this.panel1.Size = new System.Drawing.Size(98, 600);
             this.panel1.TabIndex = 0;
             // 
+            // btnBack
+            // 
+            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnBack.Location = new System.Drawing.Point(21, 18);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(54, 50);
+            this.btnBack.TabIndex = 53;
+            this.btnBack.Text = "<";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
             // dgvMapel
             // 
             this.dgvMapel.BackgroundColor = System.Drawing.Color.White;
             this.dgvMapel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvMapel.Location = new System.Drawing.Point(123, 332);
+            this.dgvMapel.Location = new System.Drawing.Point(123, 338);
             this.dgvMapel.Name = "dgvMapel";
             this.dgvMapel.RowHeadersWidth = 62;
             this.dgvMapel.RowTemplate.Height = 28;
-            this.dgvMapel.Size = new System.Drawing.Size(925, 236);
+            this.dgvMapel.Size = new System.Drawing.Size(925, 198);
             this.dgvMapel.TabIndex = 1;
             this.dgvMapel.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMapel_CellContentClick);
             // 
@@ -86,58 +99,23 @@
             this.txtIDmapel.Size = new System.Drawing.Size(415, 26);
             this.txtIDmapel.TabIndex = 2;
             // 
-            // txtMapel
-            // 
-            this.txtMapel.Location = new System.Drawing.Point(315, 54);
-            this.txtMapel.Name = "txtMapel";
-            this.txtMapel.Size = new System.Drawing.Size(415, 26);
-            this.txtMapel.TabIndex = 3;
-            // 
-            // txtTingkat
-            // 
-            this.txtTingkat.Location = new System.Drawing.Point(315, 86);
-            this.txtTingkat.Name = "txtTingkat";
-            this.txtTingkat.Size = new System.Drawing.Size(415, 26);
-            this.txtTingkat.TabIndex = 4;
-            // 
-            // txtRuangan
-            // 
-            this.txtRuangan.Location = new System.Drawing.Point(315, 118);
-            this.txtRuangan.Name = "txtRuangan";
-            this.txtRuangan.Size = new System.Drawing.Size(415, 26);
-            this.txtRuangan.TabIndex = 5;
-            // 
-            // txtDurasi
-            // 
-            this.txtDurasi.Location = new System.Drawing.Point(315, 150);
-            this.txtDurasi.Name = "txtDurasi";
-            this.txtDurasi.Size = new System.Drawing.Size(415, 26);
-            this.txtDurasi.TabIndex = 6;
-            // 
-            // txtHarikursus
-            // 
-            this.txtHarikursus.Location = new System.Drawing.Point(315, 182);
-            this.txtHarikursus.Name = "txtHarikursus";
-            this.txtHarikursus.Size = new System.Drawing.Size(415, 26);
-            this.txtHarikursus.TabIndex = 7;
-            // 
             // txtWaktukursus
             // 
-            this.txtWaktukursus.Location = new System.Drawing.Point(315, 214);
+            this.txtWaktukursus.Location = new System.Drawing.Point(315, 225);
             this.txtWaktukursus.Name = "txtWaktukursus";
             this.txtWaktukursus.Size = new System.Drawing.Size(415, 26);
             this.txtWaktukursus.TabIndex = 8;
             // 
             // txtHarga
             // 
-            this.txtHarga.Location = new System.Drawing.Point(315, 246);
+            this.txtHarga.Location = new System.Drawing.Point(315, 257);
             this.txtHarga.Name = "txtHarga";
             this.txtHarga.Size = new System.Drawing.Size(415, 26);
             this.txtHarga.TabIndex = 9;
             // 
             // txtIDTutor
             // 
-            this.txtIDTutor.Location = new System.Drawing.Point(315, 278);
+            this.txtIDTutor.Location = new System.Drawing.Point(315, 289);
             this.txtIDTutor.Name = "txtIDTutor";
             this.txtIDTutor.Size = new System.Drawing.Size(415, 26);
             this.txtIDTutor.TabIndex = 10;
@@ -232,7 +210,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(207, 217);
+            this.label7.Location = new System.Drawing.Point(207, 228);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(108, 20);
             this.label7.TabIndex = 21;
@@ -241,7 +219,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(207, 252);
+            this.label8.Location = new System.Drawing.Point(207, 263);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 20);
             this.label8.TabIndex = 22;
@@ -250,7 +228,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(207, 284);
+            this.label9.Location = new System.Drawing.Point(207, 295);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(67, 20);
             this.label9.TabIndex = 23;
@@ -266,16 +244,64 @@
             this.btnEditMapel.UseVisualStyleBackColor = true;
             this.btnEditMapel.Click += new System.EventHandler(this.btnEditMapel_Click);
             // 
-            // btnBack
+            // cbMapel
             // 
-            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnBack.Location = new System.Drawing.Point(21, 18);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(54, 50);
-            this.btnBack.TabIndex = 53;
-            this.btnBack.Text = "<";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            this.cbMapel.FormattingEnabled = true;
+            this.cbMapel.Location = new System.Drawing.Point(315, 52);
+            this.cbMapel.Name = "cbMapel";
+            this.cbMapel.Size = new System.Drawing.Size(415, 28);
+            this.cbMapel.TabIndex = 26;
+            // 
+            // cbTingkat
+            // 
+            this.cbTingkat.FormattingEnabled = true;
+            this.cbTingkat.Location = new System.Drawing.Point(315, 84);
+            this.cbTingkat.Name = "cbTingkat";
+            this.cbTingkat.Size = new System.Drawing.Size(415, 28);
+            this.cbTingkat.TabIndex = 27;
+            // 
+            // cbDurasi
+            // 
+            this.cbDurasi.FormattingEnabled = true;
+            this.cbDurasi.Location = new System.Drawing.Point(315, 151);
+            this.cbDurasi.Name = "cbDurasi";
+            this.cbDurasi.Size = new System.Drawing.Size(415, 28);
+            this.cbDurasi.TabIndex = 29;
+            // 
+            // cbRuangan
+            // 
+            this.cbRuangan.FormattingEnabled = true;
+            this.cbRuangan.Location = new System.Drawing.Point(315, 116);
+            this.cbRuangan.Name = "cbRuangan";
+            this.cbRuangan.Size = new System.Drawing.Size(415, 28);
+            this.cbRuangan.TabIndex = 28;
+            // 
+            // cbHariKursus
+            // 
+            this.cbHariKursus.FormattingEnabled = true;
+            this.cbHariKursus.Location = new System.Drawing.Point(315, 185);
+            this.cbHariKursus.Name = "cbHariKursus";
+            this.cbHariKursus.Size = new System.Drawing.Size(415, 28);
+            this.cbHariKursus.TabIndex = 30;
+            // 
+            // btnAnalyze
+            // 
+            this.btnAnalyze.Location = new System.Drawing.Point(782, 193);
+            this.btnAnalyze.Name = "btnAnalyze";
+            this.btnAnalyze.Size = new System.Drawing.Size(133, 35);
+            this.btnAnalyze.TabIndex = 31;
+            this.btnAnalyze.Text = "Analisis";
+            this.btnAnalyze.UseVisualStyleBackColor = true;
+            this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
+            // 
+            // lblMessageMapel
+            // 
+            this.lblMessageMapel.AutoSize = true;
+            this.lblMessageMapel.Location = new System.Drawing.Point(119, 555);
+            this.lblMessageMapel.Name = "lblMessageMapel";
+            this.lblMessageMapel.Size = new System.Drawing.Size(74, 20);
+            this.lblMessageMapel.TabIndex = 32;
+            this.lblMessageMapel.Text = "Message";
             // 
             // Mapel
             // 
@@ -283,6 +309,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(83)))));
             this.ClientSize = new System.Drawing.Size(1100, 600);
+            this.Controls.Add(this.lblMessageMapel);
+            this.Controls.Add(this.btnAnalyze);
+            this.Controls.Add(this.cbHariKursus);
+            this.Controls.Add(this.cbDurasi);
+            this.Controls.Add(this.cbRuangan);
+            this.Controls.Add(this.cbTingkat);
+            this.Controls.Add(this.cbMapel);
             this.Controls.Add(this.btnEditMapel);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -299,18 +332,13 @@
             this.Controls.Add(this.txtIDTutor);
             this.Controls.Add(this.txtHarga);
             this.Controls.Add(this.txtWaktukursus);
-            this.Controls.Add(this.txtHarikursus);
-            this.Controls.Add(this.txtDurasi);
-            this.Controls.Add(this.txtRuangan);
-            this.Controls.Add(this.txtTingkat);
-            this.Controls.Add(this.txtMapel);
             this.Controls.Add(this.txtIDmapel);
             this.Controls.Add(this.dgvMapel);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Mapel";
             this.Text = "Mapel";
-            this.Load += new System.EventHandler(this.Mapel_Load_1);
+            this.Load += new System.EventHandler(this.Mapel_load);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvMapel)).EndInit();
             this.ResumeLayout(false);
@@ -323,11 +351,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.DataGridView dgvMapel;
         private System.Windows.Forms.TextBox txtIDmapel;
-        private System.Windows.Forms.TextBox txtMapel;
-        private System.Windows.Forms.TextBox txtTingkat;
-        private System.Windows.Forms.TextBox txtRuangan;
-        private System.Windows.Forms.TextBox txtDurasi;
-        private System.Windows.Forms.TextBox txtHarikursus;
         private System.Windows.Forms.TextBox txtWaktukursus;
         private System.Windows.Forms.TextBox txtHarga;
         private System.Windows.Forms.TextBox txtIDTutor;
@@ -345,5 +368,12 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button btnEditMapel;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.ComboBox cbMapel;
+        private System.Windows.Forms.ComboBox cbTingkat;
+        private System.Windows.Forms.ComboBox cbDurasi;
+        private System.Windows.Forms.ComboBox cbRuangan;
+        private System.Windows.Forms.ComboBox cbHariKursus;
+        private System.Windows.Forms.Button btnAnalyze;
+        private System.Windows.Forms.Label lblMessageMapel;
     }
 }

@@ -8,23 +8,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
 
 namespace BimbelBee
 {
-    public partial class formSiswa: Form
+    public partial class formSiswa : Form
     {
         private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+
+        private MemoryCache cache = MemoryCache.Default;
+        private CacheItemPolicy cachePolicy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
+        private const string CacheKey = "SiswaDataCache";
+
         public formSiswa()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah
         }
 
         private void Siswa_load(object sender, EventArgs e)
         {
             LoadData();
+            EnsureIndex();
+
         }
 
-        // fungsi untuk mengosongkan semua input pada textbox
+        // Fungsi untuk mengosongkan semua input pada textbox
         private void ClearSiswa()
         {
             txtNISN.Clear();
@@ -33,75 +45,176 @@ namespace BimbelBee
             txtAlamat.Clear();
             txtEmail.Clear();
 
-            txtNISN.Focus(); // untuk fokus ke NISN agar user siap memasukkan data baru
+            txtNISN.Focus(); // Fokus ke NISN untuk input data baru
         }
 
-        // Fungsi untuk menampilkan data di dataGridView
+        // Fungsi untuk menampilkan data di DataGridView
         private void LoadData()
+        {
+            DataTable dt = cache.Get(CacheKey) as DataTable;
+
+            if (dt == null)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+
+                    conn.Open();
+                    string query = "SELECT nisn, nama, notelp, alamat, email FROM siswa ORDER BY nama";
+                    using (SqlDataAdapter da = new SqlDataAdapter(query, conn))
+                    {
+                        dt = new DataTable();
+                        da.Fill(dt);
+
+                        // Cache 5 menit
+                        CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5) };
+                        cache.Set(CacheKey, dt, policy);
+                    }
+                }
+            }
+
+            dgvSiswa.DataSource = dt;
+            ClearSiswa();
+        }
+
+        private void EnsureIndex()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                try
-                {
-                    conn.Open();
-                    string query = "SELECT NISN AS [nisn], nama, notelp, alamat, email FROM BIMBELBEE.dbo.siswa";
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
+                conn.Open();
+                string checkAndCreateIndex = @"
+            IF NOT EXISTS (
+                SELECT 1 
+                FROM sys.indexes
+                WHERE name = 'idx_namaSiswa'
+                AND object_id = OBJECT_ID('dbo.siswa')
+            )
+            BEGIN
+                CREATE NONCLUSTERED INDEX idx_namaSiswa ON dbo.siswa (nama)
+            END";
 
-                    dgvSiswa.AutoGenerateColumns = true;
-                    dgvSiswa.DataSource = dt;
 
-                    ClearSiswa(); //Autoclear stlh load data
-                }
-                catch (Exception ex)
+                using (SqlCommand cmd = new SqlCommand(checkAndCreateIndex, conn))
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        private void btnTambah_Click(object sender, EventArgs e)
+        private void AnalyzeQuery(string sqlQuery)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
+                conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "STATISTICS INFO"); // Handle pesan dari SET STATISTICS
+
                 try
                 {
-                    if (txtNISN.Text == "" || txtNama.Text == "" || txtNotelp.Text == "" || txtAlamat.Text == "" || txtEmail.Text == "")
-                    {
-                        MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
                     conn.Open();
-                    string query = "INSERT INTO siswa (nisn, nama, notelp, alamat, email) VALUES (@nisn, @nama, @notelp, @alamat, @email)";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+
+                    string wrapped = $@"
+                            SET STATISTICS IO ON;
+                            SET STATISTICS TIME ON;
+                            {sqlQuery};
+                            SET STATISTICS IO OFF;
+                            SET STATISTICS TIME OFF;
+                        ";
+
+                    using (SqlCommand cmd = new SqlCommand(wrapped, conn))
                     {
-                        cmd.Parameters.AddWithValue("@nisn", txtNISN.Text.Trim());
-                        cmd.Parameters.AddWithValue("@nama", txtNama.Text.Trim());
-                        cmd.Parameters.AddWithValue("@notelp", txtNotelp.Text.Trim());
-                        cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text.Trim());
-                        cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error saat menganalisis query: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
+        // Tombol Tambah dengan transaksi dan error handling
+        private void btnTambah_Click(object sender, EventArgs e)
+        {
+            string nisn = txtNISN.Text.Trim();
+            string nama = txtNama.Text.Trim();
+            string noTelp = txtNotelp.Text.Trim();
+            string alamat = txtAlamat.Text.Trim();
+            string email = txtEmail.Text.Trim();
+
+            if (string.IsNullOrEmpty(nisn) || string.IsNullOrEmpty(nama) ||
+                string.IsNullOrEmpty(noTelp) || string.IsNullOrEmpty(alamat) ||
+                string.IsNullOrEmpty(email))
+            {
+                lblMessageSiswa.Text = "Semua kolom harus diisi!";
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(nisn, @"^\d{10}$"))
+            {
+                lblMessageSiswa.Text = "NISN harus berupa 10 digit angka!";
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
+            {
+                lblMessageSiswa.Text = "Nama hanya boleh berisi huruf dan spasi!";
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,15}$"))
+            {
+                lblMessageSiswa.Text = "No Telepon harus berupa angka dan minimal 10 digit!";
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@gmail\.com$"))
+            {
+                lblMessageSiswa.Text = "Email harus berformat @gmail.com!";
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("sp_InsertSiswa", conn, transaction))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@nisn", nisn);
+                        cmd.Parameters.AddWithValue("@nama", nama);
+                        cmd.Parameters.AddWithValue("@notelp", noTelp);
+                        cmd.Parameters.AddWithValue("@alamat", alamat);
+                        cmd.Parameters.AddWithValue("@email", email);
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                         if (rowsAffected > 0)
                         {
-                            MessageBox.Show("Data berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            transaction.Commit();
+                            cache.Remove(CacheKey);
+                            lblMessageSiswa.Text = "Data berhasil ditambahkan!";
                             LoadData();
-                            ClearSiswa(); // Auto Clear setelah tambah data
+                            ClearSiswa();
                         }
                         else
                         {
-                            MessageBox.Show("Data tidak berhasil ditambahkan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            transaction.Rollback();
+                            lblMessageSiswa.Text = "Data gagal ditambahkan!";
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    transaction.Rollback();
+                    lblMessageSiswa.Text = "Error: " + ex.Message;
                 }
             }
         }
 
+
+
+        // Tombol Hapus dengan transaksi dan error handling
         private void btnHapus_Click(object sender, EventArgs e)
         {
             if (dgvSiswa.SelectedRows.Count > 0)
@@ -111,48 +224,78 @@ namespace BimbelBee
                 {
                     using (SqlConnection conn = new SqlConnection(connectionString))
                     {
+                        conn.Open();
+                        SqlTransaction transaction = conn.BeginTransaction();
+
                         try
                         {
                             string nisn = dgvSiswa.SelectedRows[0].Cells["nisn"].Value.ToString();
-                            conn.Open();
-                            string query = "DELETE FROM siswa WHERE nisn = @nisn";
-
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            using (SqlCommand cmd = new SqlCommand("sp_DeleteSiswa", conn, transaction))
                             {
+                                cmd.CommandType = CommandType.StoredProcedure;
                                 cmd.Parameters.AddWithValue("@nisn", nisn);
-                                int rowsAffected = cmd.ExecuteNonQuery();
 
+                                int rowsAffected = cmd.ExecuteNonQuery();
                                 if (rowsAffected > 0)
                                 {
-                                    MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    transaction.Commit();
+                                    cache.Remove(CacheKey);
+                                    lblMessageSiswa.Text = "Data berhasil dihapus!";
                                     LoadData();
-                                    ClearSiswa(); // Auto clear setelah hapus data
+                                    ClearSiswa();
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Data tidak ditemukan atau gagal dihapus!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    transaction.Rollback();
+                                    lblMessageSiswa.Text = "Data tidak ditemukan atau gagal dihapus!";
                                 }
-
                             }
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            transaction.Rollback();
+                            lblMessageSiswa.Text = "Error: " + ex.Message;
                         }
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Pilih data yang akan dihapus!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                lblMessageSiswa.Text = "Pilih data yang akan dihapus!";
             }
         }
+
+
+        // Tombol Edit dengan transaksi dan error handling
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (txtNISN.Text == "")
             {
-                MessageBox.Show("Silakan pilih data yang ingin diedit dari tabel!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                lblMessageSiswa.Text = "Silakan pilih data yang ingin diedit dari tabel!";
+                return;
+            }
+
+            string nisn = txtNISN.Text.Trim();
+            string nama = txtNama.Text.Trim();
+            string noTelp = txtNotelp.Text.Trim();
+            string alamat = txtAlamat.Text.Trim();
+            string email = txtEmail.Text.Trim();
+
+            if (string.IsNullOrEmpty(nisn) || string.IsNullOrEmpty(nama) ||
+                string.IsNullOrEmpty(noTelp) || string.IsNullOrEmpty(alamat) ||
+                string.IsNullOrEmpty(email))
+            {
+                lblMessageSiswa.Text = "Semua kolom harus diisi!";
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(nisn, @"^\d{10}$") ||
+                !System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$") ||
+                !System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,15}$") ||
+                !System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@gmail\.com$"))
+            {
+                lblMessageSiswa.Text = "Validasi input gagal!";
                 return;
             }
 
@@ -161,57 +304,66 @@ namespace BimbelBee
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
+
+                    conn.Open();
+                    SqlTransaction transaction = conn.BeginTransaction();
+
                     try
                     {
-                        conn.Open();
-                        string query = "UPDATE siswa SET nama = @nama, notelp = @notelp, alamat = @alamat, email = @email WHERE nisn = @nisn";
-
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        using (SqlCommand cmd = new SqlCommand("sp_UpdateSiswa", conn, transaction))
                         {
-                            cmd.Parameters.AddWithValue("@nama", txtNama.Text.Trim());
-                            cmd.Parameters.AddWithValue("@notelp", txtNotelp.Text.Trim());
-                            cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text.Trim());
-                            cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
-                            cmd.Parameters.AddWithValue("@nisn", txtNISN.Text.Trim());
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@nisn", nisn);
+                            cmd.Parameters.AddWithValue("@nama", nama);
+                            cmd.Parameters.AddWithValue("@notelp", noTelp);
+                            cmd.Parameters.AddWithValue("@alamat", alamat);
+                            cmd.Parameters.AddWithValue("@email", email);
 
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
-                                MessageBox.Show("Perubahan berhasil disimpan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                transaction.Commit();
+                                cache.Remove(CacheKey);
+                                lblMessageSiswa.Text = "Perubahan berhasil disimpan!";
                                 LoadData();
                                 ClearSiswa();
                             }
                             else
                             {
-                                MessageBox.Show("Gagal menyimpan perubahan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                transaction.Rollback();
+                                lblMessageSiswa.Text = "Gagal menyimpan perubahan!";
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        transaction.Rollback();
+                        lblMessageSiswa.Text = "Error: " + ex.Message;
                     }
                 }
             }
         }
 
+        // Tombol Refresh untuk memuat ulang data dan menampilkan debug info
         private void btnRefresh_Click(object sender, EventArgs e)
         {
+            cache.Remove(CacheKey);
             LoadData();
 
-            // Cek jumlah kolom dan baris
+            // Debugging: Tampilkan jumlah kolom dan baris pada DataGridView
             MessageBox.Show($"Jumlah Kolom: {dgvSiswa.ColumnCount}\nJumlah Baris: {dgvSiswa.RowCount}",
                 "Debugging DataGridView", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        // Mengisi TextBox ketika baris DataGridView diklik
         private void dgvSiswa_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dgvSiswa.Rows[e.RowIndex];
 
-                //Coba gunakan indeks jika "NISN" tidak ditemukan
-                txtNISN.Text = row.Cells[0].Value.ToString();
+                // Gunakan indeks untuk memastikan kolom diambil dengan benar
+                txtNISN.Text = row.Cells[0].Value?.ToString();
                 txtNama.Text = row.Cells[1].Value?.ToString();
                 txtNotelp.Text = row.Cells[2].Value?.ToString();
                 txtAlamat.Text = row.Cells[3].Value?.ToString();
@@ -219,11 +371,18 @@ namespace BimbelBee
             }
         }
 
+        // Tombol Back untuk kembali ke dashboard
         private void btnBack_Click(object sender, EventArgs e)
         {
             dashboard dashboardForm = new dashboard();
             dashboardForm.Show();
             this.Hide();
         }
+
+        private void btnAnalyzeSiswa_Click(object sender, EventArgs e)
+        {
+            string siswaAnalysisQuery = "SELECT nisn, nama, notelp FROM siswa WHERE nama LIKE 'R%'";
+            AnalyzeQuery(siswaAnalysisQuery);
+        } 
     }
 }

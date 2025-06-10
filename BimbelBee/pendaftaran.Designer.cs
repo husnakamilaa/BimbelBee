@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnBack = new System.Windows.Forms.Button();
             this.btnEditDaftar = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -44,7 +45,8 @@
             this.txtNISN = new System.Windows.Forms.TextBox();
             this.txtIDDaftar = new System.Windows.Forms.TextBox();
             this.dgvPendaftaran = new System.Windows.Forms.DataGridView();
-            this.btnBack = new System.Windows.Forms.Button();
+            this.btnAnalyzeDaftar = new System.Windows.Forms.Button();
+            this.lblMessageDaftar = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPendaftaran)).BeginInit();
             this.SuspendLayout();
@@ -58,6 +60,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(99, 600);
             this.panel1.TabIndex = 0;
+            // 
+            // btnBack
+            // 
+            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnBack.Location = new System.Drawing.Point(22, 27);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(54, 50);
+            this.btnBack.TabIndex = 41;
+            this.btnBack.Text = "<";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // btnEditDaftar
             // 
@@ -194,24 +207,35 @@
             // 
             this.dgvPendaftaran.BackgroundColor = System.Drawing.Color.White;
             this.dgvPendaftaran.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPendaftaran.Location = new System.Drawing.Point(137, 341);
+            this.dgvPendaftaran.Location = new System.Drawing.Point(134, 285);
             this.dgvPendaftaran.Name = "dgvPendaftaran";
             this.dgvPendaftaran.RowHeadersWidth = 62;
             this.dgvPendaftaran.RowTemplate.Height = 28;
             this.dgvPendaftaran.Size = new System.Drawing.Size(925, 236);
             this.dgvPendaftaran.TabIndex = 26;
             this.dgvPendaftaran.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPendaftaran_CellContentClick);
+            this.dgvPendaftaran.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPendaftaran_CellContentClick_1);
             // 
-            // btnBack
+            // btnAnalyzeDaftar
             // 
-            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnBack.Location = new System.Drawing.Point(22, 27);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(54, 50);
-            this.btnBack.TabIndex = 41;
-            this.btnBack.Text = "<";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            this.btnAnalyzeDaftar.ForeColor = System.Drawing.Color.Black;
+            this.btnAnalyzeDaftar.Location = new System.Drawing.Point(796, 202);
+            this.btnAnalyzeDaftar.Name = "btnAnalyzeDaftar";
+            this.btnAnalyzeDaftar.Size = new System.Drawing.Size(133, 42);
+            this.btnAnalyzeDaftar.TabIndex = 41;
+            this.btnAnalyzeDaftar.Text = "Analisis";
+            this.btnAnalyzeDaftar.UseVisualStyleBackColor = true;
+            this.btnAnalyzeDaftar.Click += new System.EventHandler(this.btnAnalyzeDaftar_Click);
+            // 
+            // lblMessageDaftar
+            // 
+            this.lblMessageDaftar.AutoSize = true;
+            this.lblMessageDaftar.ForeColor = System.Drawing.Color.Black;
+            this.lblMessageDaftar.Location = new System.Drawing.Point(142, 535);
+            this.lblMessageDaftar.Name = "lblMessageDaftar";
+            this.lblMessageDaftar.Size = new System.Drawing.Size(74, 20);
+            this.lblMessageDaftar.TabIndex = 42;
+            this.lblMessageDaftar.Text = "Message";
             // 
             // pendaftaran
             // 
@@ -219,6 +243,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(83)))));
             this.ClientSize = new System.Drawing.Size(1100, 600);
+            this.Controls.Add(this.lblMessageDaftar);
+            this.Controls.Add(this.btnAnalyzeDaftar);
             this.Controls.Add(this.btnEditDaftar);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -266,5 +292,7 @@
         private System.Windows.Forms.TextBox txtIDDaftar;
         private System.Windows.Forms.DataGridView dgvPendaftaran;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnAnalyzeDaftar;
+        private System.Windows.Forms.Label lblMessageDaftar;
     }
 }

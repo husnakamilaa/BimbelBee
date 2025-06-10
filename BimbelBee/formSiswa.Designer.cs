@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnBack = new System.Windows.Forms.Button();
             this.dgvSiswa = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -44,7 +45,8 @@
             this.btnHapus = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnBack = new System.Windows.Forms.Button();
+            this.lblMessageSiswa = new System.Windows.Forms.Label();
+            this.btnAnalyzeSiswa = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSiswa)).BeginInit();
             this.SuspendLayout();
@@ -56,8 +58,19 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(95, 544);
+            this.panel1.Size = new System.Drawing.Size(95, 600);
             this.panel1.TabIndex = 0;
+            // 
+            // btnBack
+            // 
+            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnBack.Location = new System.Drawing.Point(21, 20);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(54, 50);
+            this.btnBack.TabIndex = 53;
+            this.btnBack.Text = "<";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // dgvSiswa
             // 
@@ -194,23 +207,33 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // btnBack
+            // lblMessageSiswa
             // 
-            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnBack.Location = new System.Drawing.Point(21, 20);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(54, 50);
-            this.btnBack.TabIndex = 53;
-            this.btnBack.Text = "<";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            this.lblMessageSiswa.AutoSize = true;
+            this.lblMessageSiswa.Location = new System.Drawing.Point(124, 525);
+            this.lblMessageSiswa.Name = "lblMessageSiswa";
+            this.lblMessageSiswa.Size = new System.Drawing.Size(74, 20);
+            this.lblMessageSiswa.TabIndex = 16;
+            this.lblMessageSiswa.Text = "Message";
+            // 
+            // btnAnalyzeSiswa
+            // 
+            this.btnAnalyzeSiswa.Location = new System.Drawing.Point(663, 199);
+            this.btnAnalyzeSiswa.Name = "btnAnalyzeSiswa";
+            this.btnAnalyzeSiswa.Size = new System.Drawing.Size(137, 38);
+            this.btnAnalyzeSiswa.TabIndex = 17;
+            this.btnAnalyzeSiswa.Text = "Analisis";
+            this.btnAnalyzeSiswa.UseVisualStyleBackColor = true;
+            this.btnAnalyzeSiswa.Click += new System.EventHandler(this.btnAnalyzeSiswa_Click);
             // 
             // formSiswa
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(83)))));
-            this.ClientSize = new System.Drawing.Size(1078, 544);
+            this.ClientSize = new System.Drawing.Size(1100, 600);
+            this.Controls.Add(this.btnAnalyzeSiswa);
+            this.Controls.Add(this.lblMessageSiswa);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnHapus);
@@ -256,5 +279,7 @@
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Label lblMessageSiswa;
+        private System.Windows.Forms.Button btnAnalyzeSiswa;
     }
 }

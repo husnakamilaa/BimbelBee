@@ -1,6 +1,6 @@
 ﻿namespace BimbelBee
 {
-    partial class Tutor 
+    partial class Tutor
     {
         /// <summary>
         /// Required designer variable.
@@ -31,6 +31,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnBack = new System.Windows.Forms.Button();
             this.btnEditTutor = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -42,7 +43,8 @@
             this.txtNama = new System.Windows.Forms.TextBox();
             this.txtIDTutor = new System.Windows.Forms.TextBox();
             this.dgvTutor = new System.Windows.Forms.DataGridView();
-            this.btnBack = new System.Windows.Forms.Button();
+            this.btnAnalyzeTutor = new System.Windows.Forms.Button();
+            this.lblMessageTutor = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTutor)).BeginInit();
             this.SuspendLayout();
@@ -56,6 +58,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(99, 600);
             this.panel1.TabIndex = 1;
+            // 
+            // btnBack
+            // 
+            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnBack.Location = new System.Drawing.Point(22, 22);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(54, 50);
+            this.btnBack.TabIndex = 52;
+            this.btnBack.Text = "<";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // btnEditTutor
             // 
@@ -152,7 +165,7 @@
             // 
             this.dgvTutor.BackgroundColor = System.Drawing.Color.White;
             this.dgvTutor.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTutor.Location = new System.Drawing.Point(140, 317);
+            this.dgvTutor.Location = new System.Drawing.Point(136, 289);
             this.dgvTutor.Name = "dgvTutor";
             this.dgvTutor.RowHeadersWidth = 62;
             this.dgvTutor.RowTemplate.Height = 28;
@@ -160,16 +173,24 @@
             this.dgvTutor.TabIndex = 41;
             this.dgvTutor.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvTutor_CellContentClick);
             // 
-            // btnBack
+            // btnAnalyzeTutor
             // 
-            this.btnBack.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnBack.Location = new System.Drawing.Point(22, 22);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(54, 50);
-            this.btnBack.TabIndex = 52;
-            this.btnBack.Text = "<";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            this.btnAnalyzeTutor.Location = new System.Drawing.Point(799, 204);
+            this.btnAnalyzeTutor.Name = "btnAnalyzeTutor";
+            this.btnAnalyzeTutor.Size = new System.Drawing.Size(133, 36);
+            this.btnAnalyzeTutor.TabIndex = 52;
+            this.btnAnalyzeTutor.Text = "Analisis";
+            this.btnAnalyzeTutor.UseVisualStyleBackColor = true;
+            this.btnAnalyzeTutor.Click += new System.EventHandler(this.btnAnalyzeTutor_Click);
+            // 
+            // lblMessageTutor
+            // 
+            this.lblMessageTutor.AutoSize = true;
+            this.lblMessageTutor.Location = new System.Drawing.Point(132, 544);
+            this.lblMessageTutor.Name = "lblMessageTutor";
+            this.lblMessageTutor.Size = new System.Drawing.Size(74, 20);
+            this.lblMessageTutor.TabIndex = 53;
+            this.lblMessageTutor.Text = "Message";
             // 
             // Tutor
             // 
@@ -177,6 +198,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(210)))), ((int)(((byte)(83)))));
             this.ClientSize = new System.Drawing.Size(1100, 600);
+            this.Controls.Add(this.lblMessageTutor);
+            this.Controls.Add(this.btnAnalyzeTutor);
             this.Controls.Add(this.btnEditTutor);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -215,5 +238,7 @@
         private System.Windows.Forms.TextBox txtIDTutor;
         private System.Windows.Forms.DataGridView dgvTutor;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnAnalyzeTutor;
+        private System.Windows.Forms.Label lblMessageTutor;
     }
 }

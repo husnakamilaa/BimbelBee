@@ -8,53 +8,126 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.Caching;
 
 namespace BimbelBee
 {
-    public partial class pendaftaran: Form
+    public partial class pendaftaran : Form
     {
         private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        private readonly MemoryCache _cache = MemoryCache.Default;
+        private readonly CacheItemPolicy _policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5) };
+        private const string CacheKey = "PendaftaranData";
+
         public pendaftaran()
         {
             InitializeComponent();
+            txtTotalBayar.ReadOnly = true;
+            txtIDMapel.TextChanged += txtIDMapel_TextChanged;
         }
 
         private void pendaftaran_Load(object sender, EventArgs e)
         {
-            LoadData();
+            try
+            {
+                dgvPendaftaran.DefaultCellStyle.BackColor = Color.White;
+                dgvPendaftaran.DefaultCellStyle.ForeColor = Color.Black;
+                dgvPendaftaran.DefaultCellStyle.SelectionForeColor = Color.White;
+                EnsureIndexes();
+                LoadData();
+                txtTglDaftar.Text = DateTime.Today.ToString("yyyy-MM-dd");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saat memuat data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
         }
+
+        private void EnsureIndexes()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string indexScript = @"
+                IF NOT EXISTS (
+                    SELECT 1 FROM sys.indexes WHERE name = 'idx_pendaftaran_tgl_daftar' AND object_id = OBJECT_ID('pendaftaran')
+                )
+                BEGIN
+                    CREATE NONCLUSTERED INDEX idx_pendaftaran_tgl_daftar ON pendaftaran(tgl_daftar);
+                END";
+
+                using (SqlCommand cmd = new SqlCommand(indexScript, conn))
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void AnalyzeQueryPerformance(string sqlQuery)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "STATISTICS INFO");
+                conn.Open();
+                string wrapped = $@"
+                    SET STATISTICS IO ON;
+                    SET STATISTICS TIME ON;
+                    {sqlQuery}
+                    SET STATISTICS TIME OFF;
+                    SET STATISTICS IO OFF;";
+
+                using (SqlCommand cmd = new SqlCommand(wrapped, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+
         private void ClearPendaftaran()
         {
             txtIDDaftar.Clear();
             txtNISN.Clear();
             txtIDMapel.Clear();
             txtTotalBayar.Clear();
-            txtTglDaftar.Clear();
+            txtTglDaftar.Text = DateTime.Today.ToString("yyyy-MM-dd");
 
             txtIDDaftar.Focus();
         }
         private void LoadData()
         {
+            if (_cache.Contains(CacheKey))
+            {
+                dgvPendaftaran.DataSource = _cache.Get(CacheKey);
+                return;
+            }
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string query = "SELECT id_pendaftaran AS [id_pendaftaran], nisn, id_mapel, total_pembayaran, tgl_daftar FROM BIMBELBEE.dbo.pendaftaran";
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    dgvPendaftaran.AutoGenerateColumns = true;
-                    dgvPendaftaran.DataSource = dt;
-
-                    ClearPendaftaran();//Autoclear stlh load data
+                    using (SqlCommand cmd = new SqlCommand("sp_lihat_pendaftaran", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            dgvPendaftaran.DataSource = dt;
+                            _cache.Add(CacheKey, dt, _policy);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Gagal memuat data: {ex.Message}", "Error");
                 }
             }
+
+
         }
 
         private bool IsValidMapel(string idMapel)
@@ -87,161 +160,215 @@ namespace BimbelBee
             }
         }
 
+        private bool IsValidIDPendaftaran(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) return false;
+            if (!id.StartsWith("R") || id.Length != 4) return false;
+            string angka = id.Substring(1);
+            return int.TryParse(angka, out int numericValue) && numericValue > 0;
+        }
+
+        private bool IsTodayDate(string tglInput)
+        {
+            return DateTime.TryParse(tglInput, out DateTime inputDate) && inputDate.Date == DateTime.Today;
+        }
+
+        private bool ValidateInputs()
+        {
+            if (string.IsNullOrWhiteSpace(txtIDDaftar.Text) ||
+                string.IsNullOrWhiteSpace(txtNISN.Text) ||
+                string.IsNullOrWhiteSpace(txtIDMapel.Text) ||
+                string.IsNullOrWhiteSpace(txtTglDaftar.Text))
+            {
+                MessageBox.Show("Semua field wajib diisi.", "Peringatan");
+                return false;
+            }
+
+            if (!DateTime.TryParse(txtTglDaftar.Text, out DateTime _))
+            {
+                MessageBox.Show("Tanggal tidak valid.", "Peringatan");
+                return false;
+            }
+
+            return true;
+        }
 
         private void btnTambahDaftar_Click(object sender, EventArgs e)
         {
-            using(SqlConnection conn = new SqlConnection(connectionString))
+            if (!ValidateInputs()) return;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
                 try
                 {
-                    if (txtIDDaftar.Text == "" || txtNISN.Text == "" || txtIDMapel.Text == "" || txtTotalBayar.Text == "" || txtTglDaftar.Text == "")
+                    using (SqlCommand cmd = new SqlCommand("sp_tambah_pendaftaran", conn, transaction))
                     {
-                        MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
-                    // Validasi apakah id_mapel dan nisn ada di tabel mapel dan siswa
-                    if (!IsValidMapel(txtIDMapel.Text.Trim()))
-                    {
-                        MessageBox.Show("ID Mapel tidak valid! Pastikan ID Mapel sudah terdaftar.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    if (!IsValidSiswa(txtNISN.Text.Trim()))
-                    {
-                        MessageBox.Show("NISN tidak valid! Pastikan NISN sudah terdaftar.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    conn.Open();
-                    string query = "INSERT INTO pendaftaran (id_pendaftaran, nisn, id_mapel, total_pembayaran, tgl_daftar) VALUES (@id_pendaftaran, @nisn, @id_mapel, @total_pembayaran, @tgl_daftar)";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@id_pendaftaran", txtIDDaftar.Text.Trim());
                         cmd.Parameters.AddWithValue("@nisn", txtNISN.Text.Trim());
                         cmd.Parameters.AddWithValue("@id_mapel", txtIDMapel.Text.Trim());
-                        cmd.Parameters.AddWithValue("@total_pembayaran", txtTotalBayar.Text.Trim());
-                        cmd.Parameters.AddWithValue("@tgl_daftar", txtTglDaftar.Text.Trim());
+                        cmd.Parameters.AddWithValue("@total_pembayaran", 0);
+                        cmd.Parameters.AddWithValue("@tgl_daftar", DateTime.Parse(txtTglDaftar.Text.Trim()));
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
+                        cmd.ExecuteNonQuery();
+                        transaction.Commit();
+
+                        lblMessageDaftar.Text = "Data berhasil ditambahkan!";
+                        _cache.Remove(CacheKey); 
+                        LoadData();
+                        ClearPendaftaran();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show($"Gagal menambahkan data: {ex.Message}", "Error");
+                }
+            }
+
+        }
+
+        private void btnEditDaftar_Click(object sender, EventArgs e)
+        {
+            if (!ValidateInputs()) return;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("sp_update_pendaftaran", conn, transaction))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_pendaftaran", txtIDDaftar.Text.Trim());
+                        cmd.Parameters.AddWithValue("@nisn", txtNISN.Text.Trim());
+                        cmd.Parameters.AddWithValue("@id_mapel", txtIDMapel.Text.Trim());
+                        cmd.Parameters.AddWithValue("@total_pembayaran", int.Parse(txtTotalBayar.Text.Trim()));
+                        cmd.Parameters.AddWithValue("@tgl_daftar", DateTime.Parse(txtTglDaftar.Text.Trim()));
+
+                        cmd.ExecuteNonQuery();
+                        transaction.Commit();
+
+                        lblMessageDaftar.Text="Data berhasil diperbarui!";
+                        _cache.Remove(CacheKey);
+                        LoadData();
+                        ClearPendaftaran();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show($"Gagal memperbarui data: {ex.Message}", "Error");
+                }
+            }
+
+
+        }
+        private void txtIDMapel_TextChanged(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT harga FROM mapel WHERE id_mapel = @id_mapel";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id_mapel", txtIDMapel.Text.Trim());
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                            txtTotalBayar.Text = result.ToString();
+                        else
+                            txtTotalBayar.Clear();
+                    }
+                }
+                catch
+                {
+                    txtTotalBayar.Clear();
+                }
+            }
+
+        }
+
+        private void GetHargaMapel(string idMapel)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT harga FROM mapel WHERE id_mapel = @id_mapel";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id_mapel", idMapel);
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && decimal.TryParse(result.ToString(), out decimal harga))
                         {
-                            MessageBox.Show("Data berhasil ditambahkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadData();
-                            ClearPendaftaran(); // Auto Clear setelah tambah data
+                            txtTotalBayar.Text = harga.ToString("0.##"); // format 2 desimal opsional
                         }
                         else
                         {
-                            MessageBox.Show("Data tidak berhasil ditambahkan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            txtTotalBayar.Clear();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Terjadi kesalahan saat mengambil harga mapel: " + ex.Message);
                 }
             }
         }
+
 
         private void btnHapusDaftar_Click(object sender, EventArgs e)
         {
-            if (dgvPendaftaran.SelectedRows.Count > 0)
+            if (string.IsNullOrWhiteSpace(txtIDDaftar.Text))
             {
-                DialogResult confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (confirm == DialogResult.Yes)
-                {
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    {
-                        try
-                        {
-                            string id_pendaftaran = dgvPendaftaran.SelectedRows[0].Cells["nisn"].Value.ToString();
-                            conn.Open();
-                            string query = "DELETE FROM pendaftaran WHERE id_pendaftaran = @id_pendaftaran";
-
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
-                            {
-                                cmd.Parameters.AddWithValue("@id_pendaftaran", id_pendaftaran);
-                                int rowsAffected = cmd.ExecuteNonQuery();
-
-                                if (rowsAffected > 0)
-                                {
-                                    MessageBox.Show("Data berhasil dihapus!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    LoadData();
-                                    ClearPendaftaran(); // Auto clear setelah hapus data
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Data tidak ditemukan atau gagal dihapus!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Pilih data yang akan dihapus!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
-        private void btnEditDaftar_Click(object sender, EventArgs e)
-        {
-            if (txtIDDaftar.Text == "")
-            {
-                MessageBox.Show("Silakan pilih data yang ingin diedit dari tabel!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                lblMessageDaftar.Text = "Pilih data terlebih dahulu!";
                 return;
             }
 
-            DialogResult confirm = MessageBox.Show("Yakin ingin menyimpan perubahan?", "Konfirmasi Edit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (confirm == DialogResult.Yes)
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
                 {
-                    try
+                    using (SqlCommand cmd = new SqlCommand("sp_hapus_pendaftaran", conn, transaction))
                     {
-                        conn.Open();
-                        string query = "UPDATE pendaftaran SET nisn = @nisn, id_mapel = @id_mapel, total_pembayaran = @total_pembayaran, tgl_daftar = @tgl_daftar WHERE id_pendaftaran = @id_pendaftaran";
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_pendaftaran", txtIDDaftar.Text.Trim());
 
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@id_pandaftaran", txtIDDaftar.Text.Trim());
-                            cmd.Parameters.AddWithValue("@nisn", txtNISN.Text.Trim());
-                            cmd.Parameters.AddWithValue("@id_mapel", txtIDMapel.Text.Trim());
-                            cmd.Parameters.AddWithValue("@total_pembayaran", txtTotalBayar.Text.Trim());
-                            cmd.Parameters.AddWithValue("@tgl_daftar", txtTglDaftar.Text.Trim());
+                        cmd.ExecuteNonQuery();
+                        transaction.Commit();
 
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                            if (rowsAffected > 0)
-                            {
-                                MessageBox.Show("Perubahan berhasil disimpan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                LoadData();
-                                ClearPendaftaran();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Gagal menyimpan perubahan!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Data berhasil dihapus!", "Sukses");
+                        _cache.Remove(CacheKey);
+                        LoadData();
+                        ClearPendaftaran();
                     }
                 }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show($"Gagal menghapus data: {ex.Message}", "Error");
+                }
             }
+
         }
 
         private void btnRefreshDaftar_Click(object sender, EventArgs e)
         {
+            _cache.Remove(CacheKey);
             LoadData();
-
-            // Cek jumlah kolom dan baris
-            MessageBox.Show($"Jumlah Kolom: {dgvPendaftaran.ColumnCount}\nJumlah Baris: {dgvPendaftaran.RowCount}",
-                "Debugging DataGridView", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lblMessageDaftar.Text = "Data berhasil diperbarui!";
         }
 
         private void dgvPendaftaran_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -249,13 +376,11 @@ namespace BimbelBee
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dgvPendaftaran.Rows[e.RowIndex];
-
-                //Coba gunakan indeks jika "NISN" tidak ditemukan
-                txtIDDaftar.Text = row.Cells[0].Value.ToString();
-                txtNISN.Text = row.Cells[1].Value?.ToString();
-                txtIDMapel.Text = row.Cells[2].Value?.ToString();
-                txtTotalBayar.Text = row.Cells[3].Value?.ToString();
-                txtTglDaftar.Text = row.Cells[4].Value?.ToString();
+                txtIDDaftar.Text = row.Cells["id_pendaftaran"].Value.ToString();
+                txtNISN.Text = row.Cells["nisn"].Value.ToString();
+                txtIDMapel.Text = row.Cells["id_mapel"].Value.ToString();
+                txtTotalBayar.Text = row.Cells["total_pembayaran"].Value.ToString();
+                txtTglDaftar.Text = Convert.ToDateTime(row.Cells["tgl_daftar"].Value).ToString("yyyy-MM-dd");
             }
         }
 
@@ -264,6 +389,20 @@ namespace BimbelBee
             dashboard dashboardForm = new dashboard();
             dashboardForm.Show();
             this.Hide();
+        }
+
+
+
+        private void dgvPendaftaran_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void btnAnalyzeDaftar_Click(object sender, EventArgs e)
+        {
+            var heavyQuery = "SELECT nisn, total_pembayaran FROM dbo.pendaftaran WHERE tgl_daftar < '2025-07-01'";
+
+            AnalyzeQueryPerformance(heavyQuery);
         }
     }
 }

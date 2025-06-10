@@ -32,9 +32,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.WinForms, Version=0.9.7.1, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.WinForms.0.9.7.1\lib\net45\LiveCharts.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.WinForms.v12.12.0.0.1\lib\Microsoft.ReportViewer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,8 +61,25 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="cobacobaDataset.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>cobacobaDataset.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="daftarDataset3.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>daftarDataset3.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="DaftarDataset6.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DaftarDataset6.xsd</DependentUpon>
+    </Compile>
     <Compile Include="dashboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -57,6 +91,11 @@
     </Compile>
     <Compile Include="formSiswa.Designer.cs">
       <DependentUpon>formSiswa.cs</DependentUpon>
+    </Compile>
+    <Compile Include="historyDaftarDataset.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>historyDaftarDataset.xsd</DependentUpon>
     </Compile>
     <Compile Include="login.cs">
       <SubType>Form</SubType>
@@ -76,7 +115,29 @@
     <Compile Include="pendaftaran.Designer.cs">
       <DependentUpon>pendaftaran.cs</DependentUpon>
     </Compile>
+    <Compile Include="pendaftaranDataset.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>pendaftaranDataset.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="PendaftaranDataset5.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PendaftaranDataset5.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="pendaftaranDataSet7.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>pendaftaranDataSet7.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report.Designer.cs">
+      <DependentUpon>Report.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tutor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +159,7 @@
     <EmbeddedResource Include="pendaftaran.resx">
       <DependentUpon>pendaftaran.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="pendaftaranReport.rdlc" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -108,9 +170,90 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Report.resx">
+      <DependentUpon>Report.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tutor.resx">
       <DependentUpon>Tutor.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="cobacobaDataset.xsc">
+      <DependentUpon>cobacobaDataset.xsd</DependentUpon>
+    </None>
+    <None Include="cobacobaDataset.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>cobacobaDataset.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="cobacobaDataset.xss">
+      <DependentUpon>cobacobaDataset.xsd</DependentUpon>
+    </None>
+    <None Include="daftarDataset3.xsc">
+      <DependentUpon>daftarDataset3.xsd</DependentUpon>
+    </None>
+    <None Include="daftarDataset3.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>daftarDataset3.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="daftarDataset3.xss">
+      <DependentUpon>daftarDataset3.xsd</DependentUpon>
+    </None>
+    <None Include="DaftarDataset6.xsc">
+      <DependentUpon>DaftarDataset6.xsd</DependentUpon>
+    </None>
+    <None Include="DaftarDataset6.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DaftarDataset6.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DaftarDataset6.xss">
+      <DependentUpon>DaftarDataset6.xsd</DependentUpon>
+    </None>
+    <None Include="historyDaftarDataset.xsc">
+      <DependentUpon>historyDaftarDataset.xsd</DependentUpon>
+    </None>
+    <None Include="historyDaftarDataset.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>historyDaftarDataset.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="historyDaftarDataset.xss">
+      <DependentUpon>historyDaftarDataset.xsd</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+    <None Include="pendaftaranDataset.xsc">
+      <DependentUpon>pendaftaranDataset.xsd</DependentUpon>
+    </None>
+    <None Include="pendaftaranDataset.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>pendaftaranDataset.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="pendaftaranDataset.xss">
+      <DependentUpon>pendaftaranDataset.xsd</DependentUpon>
+    </None>
+    <None Include="PendaftaranDataset5.xsc">
+      <DependentUpon>PendaftaranDataset5.xsd</DependentUpon>
+    </None>
+    <None Include="PendaftaranDataset5.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PendaftaranDataset5.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PendaftaranDataset5.xss">
+      <DependentUpon>PendaftaranDataset5.xsd</DependentUpon>
+    </None>
+    <None Include="pendaftaranDataSet7.xsc">
+      <DependentUpon>pendaftaranDataSet7.xsd</DependentUpon>
+    </None>
+    <None Include="pendaftaranDataSet7.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>pendaftaranDataSet7.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="pendaftaranDataSet7.xss">
+      <DependentUpon>pendaftaranDataSet7.xsd</DependentUpon>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

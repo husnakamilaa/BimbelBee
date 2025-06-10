@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,33 +16,32 @@ namespace BimbelBee
         public login()
         {
             InitializeComponent();
+            textBox2.PasswordChar = '●'; // buat nyembunyiin passwd
+            chk1.CheckedChanged += chk1_CheckedChanged;
+            this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // Optional: Center the form on the screen
-            this.CenterToScreen();
-        }
 
         private void Masuk_Click(object sender, EventArgs e)
         {
             // Hardcoded credentials for simplicity
             string validUsername = "administrasi";
-            string validPassword = "password123";
+            string validPasswordHash = HashPassword("password123");
 
             // Assuming textBox1 is for Username and textBox2 is for Password
-            string enteredUsername = "administrasi";
-            string enteredPassword = "password123";
+            string enteredUsername = textBox1.Text;
+            string enteredPassword = textBox2.Text;
+            string enteredPasswordHash = HashPassword(enteredPassword);
 
             if (string.IsNullOrWhiteSpace(enteredUsername) || string.IsNullOrWhiteSpace(enteredPassword))
             {
-                MessageBox.Show("Please enter both username and password.", "Login Error");
+                MessageBox.Show("Silakan masukkan username dan password.", "Login Error");
                 return;
             }
 
-            if (enteredUsername == validUsername && enteredPassword == validPassword)
+            if (enteredUsername == validUsername && enteredPasswordHash == validPasswordHash)
             {
-                MessageBox.Show("Login successful!", "Success");
+                MessageBox.Show("Login berhasil!", "Success");
                 // Open the pendaftaran form
                 dashboard dashboardForm = new dashboard();
                 dashboardForm.Show();
@@ -49,25 +49,39 @@ namespace BimbelBee
             }
             else
             {
-                MessageBox.Show("Invalid username or password.", "Login Failed");
+                MessageBox.Show("Username atau password salah.", "Login Gagal");
                 // Clear the password field for retry
                 textBox2.Text = "";
             }
         }
-    }
-
-    static class Program
-    {
-        // Titik masuk utama aplikasi
-        [STAThread]
-        static void Main()
+        private string HashPassword(string password)
         {
-            // Mengaktifkan visual styles untuk aplikasi Windows Forms
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
 
-            // Menampilkan form login saat aplikasi dimulai
-            Application.Run(new login());
+        private void chk1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chk1.Checked)
+            {
+                textBox2.PasswordChar = '\0'; // Menampilkan password
+                chk1.Text = "Sembunyikan Password";
+            }
+            else
+            {
+                textBox2.PasswordChar = '●'; // Menyembunyikan password
+                chk1.Text = "Tampilkan Password";
+            }
         }
     }
+
+
 }
