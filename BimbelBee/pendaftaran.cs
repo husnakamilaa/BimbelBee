@@ -216,6 +216,8 @@ namespace BimbelBee
         {
             if (!ValidateInputs()) return;
 
+            GetHargaMapel(txtIDMapel.Text.Trim());
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -253,6 +255,8 @@ namespace BimbelBee
         private void btnEditDaftar_Click(object sender, EventArgs e)
         {
             if (!ValidateInputs()) return;
+
+            GetHargaMapel(txtIDMapel.Text.Trim());
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
