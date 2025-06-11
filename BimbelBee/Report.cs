@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
+using System.IO;
 
 namespace BimbelBee
 {
@@ -46,6 +47,7 @@ namespace BimbelBee
                     p.tgl_daftar";
 
             DataTable dt = new DataTable();
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
@@ -57,7 +59,7 @@ namespace BimbelBee
             reportViewer1.LocalReport.DataSources.Clear();
             reportViewer1.LocalReport.DataSources.Add(rds);
 
-            reportViewer1.LocalReport.ReportPath = @"D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\pendaftaranReport.rdlc"; 
+            reportViewer1.LocalReport.ReportPath = @"C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\pendaftaranReport.rdlc"; 
             reportViewer1.RefreshReport();
         }
 

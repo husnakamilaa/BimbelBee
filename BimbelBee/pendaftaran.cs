@@ -180,15 +180,34 @@ namespace BimbelBee
                 string.IsNullOrWhiteSpace(txtIDMapel.Text) ||
                 string.IsNullOrWhiteSpace(txtTglDaftar.Text))
             {
-                MessageBox.Show("Semua field wajib diisi.", "Peringatan");
+                lblMessageDaftar.Text = "Semua kolom wajib diisi dong!!";
                 return false;
             }
 
             if (!DateTime.TryParse(txtTglDaftar.Text, out DateTime _))
             {
-                MessageBox.Show("Tanggal tidak valid.", "Peringatan");
+                lblMessageDaftar.Text = "Tanggal tidak valid.";
                 return false;
             }
+
+            if (!IsValidIDPendaftaran(txtIDDaftar.Text.Trim())) // <--- PANGGILAN PERTAMA
+            {
+                lblMessageDaftar.Text = "ID Pendaftaran tidak valid. Harus diawali 'R' dan diikuti 3 digit angka dan dimulai dari '001'.";
+                return false;
+            }
+
+            if (!IsValidSiswa(txtNISN.Text.Trim()))
+            {
+                lblMessageDaftar.Text = "NISN tidak terdaftar.";
+                return false;
+            }
+
+            if (!IsValidMapel(txtIDMapel.Text.Trim()))
+            {   
+                lblMessageDaftar.Text = "ID Mapel tidak ditemukan.";
+                return false;
+            }
+
 
             return true;
         }
@@ -214,8 +233,8 @@ namespace BimbelBee
                         cmd.Parameters.AddWithValue("@tgl_daftar", DateTime.Parse(txtTglDaftar.Text.Trim()));
 
                         cmd.ExecuteNonQuery();
+                        
                         transaction.Commit();
-
                         lblMessageDaftar.Text = "Data berhasil ditambahkan!";
                         _cache.Remove(CacheKey); 
                         LoadData();
@@ -225,7 +244,7 @@ namespace BimbelBee
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    MessageBox.Show($"Gagal menambahkan data: {ex.Message}", "Error");
+                    lblMessageDaftar.Text = "Error: " + ex.Message;
                 }
             }
 
@@ -254,7 +273,7 @@ namespace BimbelBee
                         cmd.ExecuteNonQuery();
                         transaction.Commit();
 
-                        lblMessageDaftar.Text="Data berhasil diperbarui!";
+                        lblMessageDaftar.Text= "Data berhasil diperbarui!";
                         _cache.Remove(CacheKey);
                         LoadData();
                         ClearPendaftaran();
@@ -263,7 +282,7 @@ namespace BimbelBee
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    MessageBox.Show($"Gagal memperbarui data: {ex.Message}", "Error");
+                    lblMessageDaftar.Text = "Error: " + ex.Message;
                 }
             }
 
@@ -349,7 +368,7 @@ namespace BimbelBee
                         cmd.ExecuteNonQuery();
                         transaction.Commit();
 
-                        MessageBox.Show("Data berhasil dihapus!", "Sukses");
+                        lblMessageDaftar.Text = "Data berhasil dihapus!";
                         _cache.Remove(CacheKey);
                         LoadData();
                         ClearPendaftaran();
@@ -358,7 +377,7 @@ namespace BimbelBee
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    MessageBox.Show($"Gagal menghapus data: {ex.Message}", "Error");
+                    lblMessageDaftar.Text = "Error: " + ex.Message;
                 }
             }
 

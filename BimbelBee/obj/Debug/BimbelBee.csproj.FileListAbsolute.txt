@@ -25,3 +25,30 @@ D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\De
 D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.exe
 D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\obj\Debug\BimbelBee.pdb
 D:\SEM 4\07. PABD\PRAKTIKUM\03. Project\visual studio\BimbelBee\BimbelBee\bin\Debug\BimbelBee.pdb
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\BimbelBee.exe.config
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\BimbelBee.exe
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\BimbelBee.pdb
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.dll
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.WinForms.dll
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\Microsoft.ReportViewer.WinForms.dll
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.pdb
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.xml
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.WinForms.pdb
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.WinForms.xml
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.Wpf.pdb
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.AssemblyReference.cache
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.dashboard.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.formSiswa.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.login.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Mapel.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.pendaftaran.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Properties.Resources.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Report.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.Tutor.resources
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.GenerateResource.cache
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.CoreCompileInputs.cache
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.csproj.Up2Date
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.exe
+C:\Users\T480s\Source\Repos\BimbelBee\BimbelBee\obj\Debug\BimbelBee.pdb
