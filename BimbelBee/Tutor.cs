@@ -10,13 +10,17 @@ namespace BimbelBee
 {
     public partial class Tutor : Form
     {
-        private readonly string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        //private readonly string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        Koneksi kn = new Koneksi();
+        string strKonek = "";
+
         private MemoryCache cache = MemoryCache.Default;
 
         public Tutor()
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
+            strKonek = kn.connectionString();
         }
 
         private void Tutor_Load(object sender, EventArgs e)
@@ -27,7 +31,7 @@ namespace BimbelBee
 
         private void EnsureIndex()
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 try
                 {
@@ -71,7 +75,7 @@ namespace BimbelBee
             }
             else
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 using (SqlCommand cmd = new SqlCommand("sp_GetAllTutors", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -107,21 +111,29 @@ namespace BimbelBee
             string nama = txtNama.Text.Trim();
             string telp = txtTelepon.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(id) || !Regex.IsMatch(id, @"^T\d+$"))
+            if (string.IsNullOrWhiteSpace(txtIDTutor.Text) ||
+            string.IsNullOrWhiteSpace(txtNama.Text) ||
+            string.IsNullOrWhiteSpace (txtTelepon.Text))
+            { 
+                lblMessageTutor.Text = "Semua kolom wajib diisi!!";
+                return false;
+            }
+
+            if (!Regex.IsMatch(id, @"^T\d{3}$"))
             {
                 lblMessageTutor.Text = "ID Tutor harus diawali 'T' dan diikuti angka (contoh: T001)";
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(nama) || !Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
+            if (!Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
             {
                 lblMessageTutor.Text = "Nama hanya boleh huruf dan tidak boleh kosong";
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(telp) || !Regex.IsMatch(telp, @"^08\d{8,11}$"))
+            if (!Regex.IsMatch(telp, @"^08\d{8,11}$"))
             {
-                lblMessageTutor.Text = "Nomor telepon harus diawali 08 dan memiliki 10–13 digit";
+                lblMessageTutor.Text = "Nomor telepon berawalan '08' dan memiliki panjang 10–13 digit";
                 return false;
             }
 
@@ -132,7 +144,7 @@ namespace BimbelBee
         {
             if (!ValidasiInput()) return;
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -145,11 +157,21 @@ namespace BimbelBee
                     cmd.Parameters.AddWithValue("@nama_tutor", txtNama.Text.Trim());
                     cmd.Parameters.AddWithValue("@notelp", txtTelepon.Text.Trim());
 
-                    cmd.ExecuteNonQuery();
-                    transaction.Commit();
-                    cache.Remove("TutorData"); // Refresh cache
-                    lblMessageTutor.Text = "Tutor berhasil ditambahkan.";
-                    LoadData();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        transaction.Commit();
+                        cache.Remove("TutorData"); // Refresh cache
+                        lblMessageTutor.Text = "Tutor berhasil ditambahkan.";
+                        LoadData();
+                        ClearTutor();
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        lblMessageTutor.Text = "Data gagal ditambahkan!";
+                    }
+                    
                 }
                 catch (SqlException ex)
                 {
@@ -163,11 +185,7 @@ namespace BimbelBee
                     {
                         lblMessageTutor.Text = "Terjadi error SQL: " + ex.Message;
                     }
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    lblMessageTutor.Text = "Error tak terduga: " + ex.Message;
+
                 }
             }
         }
@@ -185,7 +203,7 @@ namespace BimbelBee
             DialogResult confirm = MessageBox.Show("Yakin ingin mengubah data?", "Konfirmasi", MessageBoxButtons.YesNo);
             if (confirm != DialogResult.Yes) return;
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -232,7 +250,7 @@ namespace BimbelBee
             DialogResult confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo);
             if (confirm != DialogResult.Yes) return;
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -293,7 +311,7 @@ namespace BimbelBee
         {
             var statsBuilder = new StringBuilder();
 
-            using (var conn = new SqlConnection(connectionString))
+            using (var conn = new SqlConnection(strKonek))
             {
                 conn.InfoMessage += (s, args) =>
                 {

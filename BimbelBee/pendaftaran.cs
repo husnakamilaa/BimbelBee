@@ -14,7 +14,11 @@ namespace BimbelBee
 {
     public partial class pendaftaran : Form
     {
-        private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        //private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+
+        Koneksi kn = new Koneksi();
+        string strKonek = "";
+
         private readonly MemoryCache _cache = MemoryCache.Default;
         private readonly CacheItemPolicy _policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5) };
         private const string CacheKey = "PendaftaranData";
@@ -25,6 +29,7 @@ namespace BimbelBee
             txtTotalBayar.ReadOnly = true;
             txtIDMapel.TextChanged += txtIDMapel_TextChanged;
             this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah
+            strKonek = kn.connectionString();
         }
 
         private void pendaftaran_Load(object sender, EventArgs e)
@@ -52,7 +57,7 @@ namespace BimbelBee
 
         private void EnsureIndexes()
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 string indexScript = @"
                 IF NOT EXISTS (
@@ -72,7 +77,7 @@ namespace BimbelBee
 
         private void AnalyzeQueryPerformance(string sqlQuery)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "STATISTICS INFO");
                 conn.Open();
@@ -109,7 +114,7 @@ namespace BimbelBee
                 return;
             }
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 try
                 {
@@ -132,12 +137,12 @@ namespace BimbelBee
                 }
             }
 
-
+            ClearPendaftaran();
         }
 
         private bool IsValidMapel(string idMapel)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 string query = "SELECT COUNT(*) FROM mapel WHERE id_mapel = @id_mapel";
@@ -152,7 +157,7 @@ namespace BimbelBee
 
         private bool IsValidSiswa(string nisn)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 string query = "SELECT COUNT(*) FROM siswa WHERE nisn = @nisn";
@@ -223,7 +228,7 @@ namespace BimbelBee
 
             GetHargaMapel(txtIDMapel.Text.Trim());
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -261,12 +266,9 @@ namespace BimbelBee
                         lblMessageDaftar.Text = "Terjadi error SQL: " + ex.Message;
                     }
                 }
-                catch (Exception ex)
-                {
-                    transaction?.Rollback();
-                    lblMessageDaftar.Text = "Error tak terduga: " + ex.Message;
-                }
+
             }
+
 
         }
 
@@ -276,7 +278,7 @@ namespace BimbelBee
 
             GetHargaMapel(txtIDMapel.Text.Trim());
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -292,19 +294,27 @@ namespace BimbelBee
                         cmd.Parameters.AddWithValue("@total_pembayaran", int.Parse(txtTotalBayar.Text.Trim()));
                         cmd.Parameters.AddWithValue("@tgl_daftar", DateTime.Parse(txtTglDaftar.Text.Trim()));
 
-                        cmd.ExecuteNonQuery();
-                        transaction.Commit();
-
-                        lblMessageDaftar.Text= "Data berhasil diperbarui!";
-                        _cache.Remove(CacheKey);
-                        LoadData();
-                        ClearPendaftaran();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            transaction.Commit();
+                            lblMessageDaftar.Text = "Data berhasil diperbarui!";
+                            _cache.Remove(CacheKey);
+                            LoadData();
+                            ClearPendaftaran();
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            lblMessageDaftar.Text = "ID Pendaftaran tidak ditemukan";
+                        }
+                        
                     }
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    lblMessageDaftar.Text = "Error: " + ex.Message;
+                    lblMessageDaftar.Text = "Terjadi error SQL: " + ex.Message;
                 }
             }
 
@@ -312,7 +322,7 @@ namespace BimbelBee
         }
         private void txtIDMapel_TextChanged(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 try
                 {
@@ -338,7 +348,7 @@ namespace BimbelBee
 
         private void GetHargaMapel(string idMapel)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 try
                 {
@@ -375,7 +385,7 @@ namespace BimbelBee
                 return;
             }
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
@@ -409,7 +419,7 @@ namespace BimbelBee
         {
             _cache.Remove(CacheKey);
             LoadData();
-            lblMessageDaftar.Text = "Data berhasil diperbarui!";
+
         }
 
         private void dgvPendaftaran_CellContentClick(object sender, DataGridViewCellEventArgs e)

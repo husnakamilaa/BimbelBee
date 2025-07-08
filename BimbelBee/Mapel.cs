@@ -16,10 +16,13 @@
     {
         public partial class Mapel: Form
         {
-            private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        //private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
 
-            // caching 
-            private MemoryCache cache = MemoryCache.Default;
+        Koneksi kn = new Koneksi();
+        string strKonek = "";
+
+        // caching 
+        private MemoryCache cache = MemoryCache.Default;
             private CacheItemPolicy cachePolicy = new CacheItemPolicy 
             { 
                 AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5) 
@@ -30,6 +33,7 @@
             {
                 InitializeComponent();
                 this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah
+                strKonek = kn.connectionString();
             }
 
             private void Mapel_load(object sender, EventArgs e)
@@ -96,7 +100,7 @@
             // ensure indexes disini yak
             private void EnsureIndexes()
             {
-                using (var conn = new SqlConnection(connectionString))
+                using (var conn = new SqlConnection(strKonek))
                 {
                     conn.Open();
                     var indexScript = @"
@@ -127,7 +131,7 @@
                 else
                 {
                     dt = new DataTable();
-                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    using (SqlConnection conn = new SqlConnection(strKonek))
                     {
                         try
                         {
@@ -159,7 +163,7 @@
             // Method untuk memverifikasi apakah id_tutor valid (ada di tabel tutor)
             private bool IsValidTutor(string idTutor)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
                     try
                     {
@@ -225,7 +229,7 @@
 
             private bool IsScheduleConflict(string idTutor, string hariKursus, string waktuKursus, string idMapel = null)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
                     try
                     {
@@ -267,7 +271,7 @@
 
             private void btnTambahMapel_Click(object sender, EventArgs e)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
                     SqlTransaction transaction = null;
                     try
@@ -277,7 +281,7 @@
 
                         if (txtIDmapel.Text == "" || cbMapel.SelectedIndex == -1 || cbTingkat.SelectedIndex == -1 || cbRuangan.SelectedIndex == -1 || cbDurasi.SelectedIndex == -1 || cbHariKursus.SelectedIndex == -1 || txtWaktukursus.Text == "" || txtHarga.Text == "" || txtIDTutor.Text == "")
                         {
-                            lblMessageMapel.Text = "Harap isi semua data! jangan cuman diisi spasi";
+                            lblMessageMapel.Text = "Isi semua data dong!";
                             return;
                         }
 
@@ -369,7 +373,7 @@
 
                         if (harga < 2000000 || harga > 7000000)
                         {
-                            lblMessageMapel.Text = "Harga harus berada di antara 2.000.000 dan 7.000.000!";
+                            lblMessageMapel.Text = "Harga harus berada di antara 2.000.000 sampai 7.000.000!";
                             return;
                         }
 
@@ -433,7 +437,7 @@
                     DialogResult confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (confirm == DialogResult.Yes)
                     {
-                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        using (SqlConnection conn = new SqlConnection(strKonek))
                         {
                             SqlTransaction transaction = null;
                             try
@@ -464,10 +468,18 @@
 
                                 }
                             }
-                            catch (Exception ex)
+                            catch (SqlException ex)
                             {
                                 transaction?.Rollback();
-                                lblMessageMapel.Text = "Error: " + ex.Message;
+
+                                if (ex.Number == 547) // foreign key violation namanya
+                                {
+                                    lblMessageMapel.Text = "Data mapel tidak bisa dihapus yak! biar bisa dipake lagii";
+                                }
+                                else
+                                {
+                                    lblMessageMapel.Text = "Terjadi error: " + ex.Message;
+                                }
                             }
                         }
                     }
@@ -487,7 +499,7 @@
                     return;
                 }
 
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
                     SqlTransaction transaction = null; 
 
@@ -575,7 +587,7 @@
 
                         if (harga < 2000000 || harga > 7000000)
                         {
-                            lblMessageMapel.Text = "Harga harus berada di antara 2.000.000 dan 7.000.000!";
+                            lblMessageMapel.Text = "Harga harus berada di antara 2.000.000 sampai 7.000.000!";
                             return;
                         }
 
@@ -664,7 +676,7 @@
 
             private void AnalyzeQuery(string sqlQuery)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
                     conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "STATISTICS INFO"); //handle pesan dari SET STATISTICS
 

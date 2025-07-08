@@ -14,7 +14,9 @@ namespace BimbelBee
 {
     public partial class formSiswa : Form
     {
-        private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        //private string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+        Koneksi kn = new Koneksi();
+        string strKonek = "";
 
         private MemoryCache cache = MemoryCache.Default;
         private CacheItemPolicy cachePolicy = new CacheItemPolicy
@@ -27,6 +29,7 @@ namespace BimbelBee
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah
+            strKonek = kn.connectionString();
         }
 
         private void Siswa_load(object sender, EventArgs e)
@@ -55,7 +58,7 @@ namespace BimbelBee
 
             if (dt == null)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
 
                     conn.Open();
@@ -78,7 +81,7 @@ namespace BimbelBee
 
         private void EnsureIndex()
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
                 string checkAndCreateIndex = @"
@@ -102,7 +105,7 @@ namespace BimbelBee
 
         private void AnalyzeQuery(string sqlQuery)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.InfoMessage += (s, e) => MessageBox.Show(e.Message, "STATISTICS INFO"); // Handle pesan dari SET STATISTICS
 
@@ -147,16 +150,9 @@ namespace BimbelBee
                 lblMessageSiswa.Text = "Semua kolom harus diisi!";
                 return;
             }
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(nisn, @"^\d{10}$"))
-            {
-                lblMessageSiswa.Text = "NISN harus berupa 10 digit angka!";
-                return;
-            }
-
             if (!System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
             {
-                lblMessageSiswa.Text = "Nama hanya boleh berisi huruf dan tanpa spasi!";
+                lblMessageSiswa.Text = "Nama hanya boleh berisi huruf!";
                 return;
             }
 
@@ -179,9 +175,22 @@ namespace BimbelBee
             }
 
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 conn.Open();
+
+                using (SqlCommand checkEmailCmd = new SqlCommand("SELECT COUNT(*) FROM siswa WHERE email = @Email", conn))
+                {
+                    checkEmailCmd.Parameters.AddWithValue("@Email", email);
+                    int emailCount = (int)checkEmailCmd.ExecuteScalar();
+
+                    if (emailCount > 0)
+                    {
+                        lblMessageSiswa.Text = "Email udah ada! pake email yang beda!";
+                        return; //berhentiin dulu sebelum mulai transaksi
+                    }
+                }
+
                 SqlTransaction transaction = conn.BeginTransaction();
 
                 try
@@ -216,7 +225,7 @@ namespace BimbelBee
                     transaction.Rollback();
                     if (ex.Number == 2627 || ex.Number == 2601)
                     {
-                        lblMessageSiswa.Text = "ID Mapel sudah terdaftar! Gunakan ID yang berbeda.";
+                        lblMessageSiswa.Text = "NISN sudah terdaftar! Gunakan NISN yang berbeda.";
                     }
                     else
                     {
@@ -236,7 +245,7 @@ namespace BimbelBee
                 DialogResult confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (confirm == DialogResult.Yes)
                 {
-                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    using (SqlConnection conn = new SqlConnection(strKonek))
                     {
                         conn.Open();
                         SqlTransaction transaction = conn.BeginTransaction();
@@ -304,22 +313,40 @@ namespace BimbelBee
                 return;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(nisn, @"^\d{10}$") ||
-                !System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$") ||
-                !System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,13}$") ||
-                !System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@gmail\.com$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(nisn, @"^\d{10}$"))
             {
-                lblMessageSiswa.Text = "Validasi input gagal!";
+                lblMessageSiswa.Text = "NISN harus berupa 10 digit angka!";
+                return;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
+            {
+                lblMessageSiswa.Text = "Nama hanya boleh berisi huruf!";
+                return;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,13}$"))
+            {
+                lblMessageSiswa.Text = "No Telepon harus berupa angka dan terdiri dari 10-13 digit!";
+                return;
+            }
+            if (!noTelp.StartsWith("08"))
+            {
+                lblMessageSiswa.Text = "No Telepon harus diawali dengan '08'!";
+                return;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@gmail\.com$"))
+            {
+                lblMessageSiswa.Text = "Email harus berformat @gmail.com!";
                 return;
             }
 
             DialogResult confirm = MessageBox.Show("Yakin ingin menyimpan perubahan?", "Konfirmasi Edit", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm == DialogResult.Yes)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(strKonek))
                 {
 
                     conn.Open();
+
                     SqlTransaction transaction = conn.BeginTransaction();
 
                     try
@@ -397,6 +424,11 @@ namespace BimbelBee
         {
             string siswaAnalysisQuery = "SELECT nisn, nama, notelp FROM siswa WHERE nama LIKE 'R%'";
             AnalyzeQuery(siswaAnalysisQuery);
-        } 
+        }
+
+        private void formSiswa_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

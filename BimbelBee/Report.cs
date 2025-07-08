@@ -16,10 +16,15 @@ namespace BimbelBee
 {
     public partial class Report: Form
     {
+        Koneksi kn = new Koneksi();
+        string strKonek = "";
+
         public Report()
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah
+            strKonek = kn.connectionString();
+
         }
 
         private void Report_Load(object sender, EventArgs e)
@@ -30,7 +35,7 @@ namespace BimbelBee
 
         private void SetupReportViewer()
         {
-            string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
+            //string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
             string query = @"
                 SELECT
                     s.nisn,
@@ -48,7 +53,7 @@ namespace BimbelBee
 
             DataTable dt = new DataTable();
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(strKonek))
             {
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 da.Fill(dt);

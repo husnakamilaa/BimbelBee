@@ -253,6 +253,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "formSiswa";
             this.Text = "formSiswa";
+            this.Load += new System.EventHandler(this.formSiswa_Load);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvSiswa)).EndInit();
             this.ResumeLayout(false);
