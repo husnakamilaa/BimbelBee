@@ -133,6 +133,11 @@
     <Compile Include="Report.Designer.cs">
       <DependentUpon>Report.cs</DependentUpon>
     </Compile>
+    <Compile Include="reportDataset8.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>reportDataset8.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Tutor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -252,6 +257,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="reportDataset8.xsc">
+      <DependentUpon>reportDataset8.xsd</DependentUpon>
+    </None>
+    <None Include="reportDataset8.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>reportDataset8.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="reportDataset8.xss">
+      <DependentUpon>reportDataset8.xsd</DependentUpon>
+    </None>
     <None Include="Resources\home kuning png.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

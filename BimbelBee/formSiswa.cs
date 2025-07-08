@@ -205,10 +205,17 @@ namespace BimbelBee
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (SqlException ex)
                 {
                     transaction.Rollback();
-                    lblMessageSiswa.Text = "Error: " + ex.Message;
+                    if (ex.Number == 2627 || ex.Number == 2601)
+                    {
+                        lblMessageSiswa.Text = "ID Mapel sudah terdaftar! Gunakan ID yang berbeda.";
+                    }
+                    else
+                    {
+                        lblMessageSiswa.Text = "Terjadi error SQL: " + ex.Message;
+                    }
                 }
             }
         }
@@ -332,14 +339,14 @@ namespace BimbelBee
                             else
                             {
                                 transaction.Rollback();
-                                lblMessageSiswa.Text = "Gagal menyimpan perubahan!";
+                                lblMessageSiswa.Text = "NISN tidak ditemukan";
                             }
                         }
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        lblMessageSiswa.Text = "Error: " + ex.Message;
+                        lblMessageSiswa.Text = "Terjadi error SQL: " + ex.Message;
                     }
                 }
             }

@@ -24,6 +24,7 @@ namespace BimbelBee
             InitializeComponent();
             txtTotalBayar.ReadOnly = true;
             txtIDMapel.TextChanged += txtIDMapel_TextChanged;
+            this.StartPosition = FormStartPosition.CenterScreen; // biar posisi ditengah
         }
 
         private void pendaftaran_Load(object sender, EventArgs e)
@@ -35,15 +36,19 @@ namespace BimbelBee
                 dgvPendaftaran.DefaultCellStyle.SelectionForeColor = Color.White;
                 EnsureIndexes();
                 LoadData();
+
                 txtTglDaftar.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                txtTglDaftar.ReadOnly = true;      
+                txtTglDaftar.TabStop = false;      
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error saat memuat data: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
         }
+
 
         private void EnsureIndexes()
         {
@@ -163,7 +168,7 @@ namespace BimbelBee
         private bool IsValidIDPendaftaran(string id)
         {
             if (string.IsNullOrWhiteSpace(id)) return false;
-            if (!id.StartsWith("R") || id.Length != 4) return false;
+            if (!id.StartsWith("R") || id.Length != 6) return false;
             string angka = id.Substring(1);
             return int.TryParse(angka, out int numericValue) && numericValue > 0;
         }
@@ -192,7 +197,7 @@ namespace BimbelBee
 
             if (!IsValidIDPendaftaran(txtIDDaftar.Text.Trim())) // <--- PANGGILAN PERTAMA
             {
-                lblMessageDaftar.Text = "ID Pendaftaran tidak valid. Harus diawali 'R' dan diikuti 3 digit angka dan dimulai dari '001'.";
+                lblMessageDaftar.Text = "ID Pendaftaran tidak valid. Harus diawali 'R' dan diikuti 5 digit angka dan dimulai dari '00001'.";
                 return false;
             }
 
@@ -243,10 +248,23 @@ namespace BimbelBee
                         ClearPendaftaran();
                     }
                 }
+                catch (SqlException ex)
+                {
+                    transaction?.Rollback();
+
+                    if (ex.Number == 2627 || ex.Number == 2601)
+                    {
+                        lblMessageDaftar.Text = "ID Pendaftaran sudah terdaftar! Gunakan ID yang berbeda.";
+                    }
+                    else
+                    {
+                        lblMessageDaftar.Text = "Terjadi error SQL: " + ex.Message;
+                    }
+                }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
-                    lblMessageDaftar.Text = "Error: " + ex.Message;
+                    transaction?.Rollback();
+                    lblMessageDaftar.Text = "Error tak terduga: " + ex.Message;
                 }
             }
 

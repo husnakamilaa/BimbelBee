@@ -16,6 +16,7 @@ namespace BimbelBee
         public Tutor()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void Tutor_Load(object sender, EventArgs e)
@@ -106,9 +107,9 @@ namespace BimbelBee
             string nama = txtNama.Text.Trim();
             string telp = txtTelepon.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(id) || !Regex.IsMatch(id, @"^T\d+$") || id.Equals("T000"))
+            if (string.IsNullOrWhiteSpace(id) || !Regex.IsMatch(id, @"^T\d+$"))
             {
-                lblMessageTutor.Text = "ID Tutor harus diawali 'T' dan tidak boleh T000";
+                lblMessageTutor.Text = "ID Tutor harus diawali 'T' dan diikuti angka (contoh: T001)";
                 return false;
             }
 
@@ -150,10 +151,23 @@ namespace BimbelBee
                     lblMessageTutor.Text = "Tutor berhasil ditambahkan.";
                     LoadData();
                 }
+                catch (SqlException ex)
+                {
+                    transaction.Rollback();
+
+                    if (ex.Number == 2627 || ex.Number == 2601)
+                    {
+                        lblMessageTutor.Text = "ID Tutor sudah terdaftar! Gunakan ID yang berbeda.";
+                    }
+                    else
+                    {
+                        lblMessageTutor.Text = "Terjadi error SQL: " + ex.Message;
+                    }
+                }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    lblMessageTutor.Text = "Gagal menambahkan data: " + ex.Message;
+                    lblMessageTutor.Text = "Error tak terduga: " + ex.Message;
                 }
             }
         }
@@ -195,13 +209,13 @@ namespace BimbelBee
                     else
                     {
                         transaction.Rollback();
-                        lblMessageTutor.Text = "Data tidak ditemukan.";
+                        lblMessageTutor.Text = "ID Tutor Tidak Ditemukan";
                     }
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    lblMessageTutor.Text = "Gagal mengubah data: " + ex.Message;
+                    lblMessageTutor.Text = "Terjadi error SQL : " + ex.Message;
                 }
             }
         }
@@ -270,7 +284,9 @@ namespace BimbelBee
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            this.Close();
+            dashboard dashboardForm = new dashboard();
+            dashboardForm.Show();
+            this.Hide();
         }
 
         private void btnAnalyzeTutor_Click(object sender, EventArgs e)

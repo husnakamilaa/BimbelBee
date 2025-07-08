@@ -192,7 +192,7 @@
                     { "sejarah", "S" },
                     { "geografi", "G"},
                     { "ekonomi", "E" },
-                    { "sosiologi", "S" }
+                    { "sosiologi", "O" }
                 };
                 if (!kodeMapel.ContainsKey(mapel))
                     return false;
@@ -209,10 +209,10 @@
                     { "matematika", "M" },
                     { "fisika", "F" },
                     { "kimia", "K" },
-                    { "sejarah", "S" },
+                    { "sejarah", "S" },     
                     { "geografi", "G" },
                     { "ekonomi", "E" },
-                    { "sosiologi", "S" }
+                    { "sosiologi", "O" }
                 };
 
                 if (kodeMapel.ContainsKey(mapel))
@@ -231,8 +231,13 @@
                     {
                         conn.Open();
 
-                        string query = "SELECT COUNT(*) FROM mapel WHERE id_tutor = @id_tutor AND hari_kursus = @hari_kursus AND waktu_kursus = @waktu_kursus";
-                        if (!string.IsNullOrEmpty(idMapel))
+                    string query = @"
+                        SELECT COUNT(*) 
+                        FROM mapel 
+                        WHERE id_tutor = @id_tutor 
+                          AND hari_kursus = @hari_kursus 
+                          AND ABS(DATEDIFF(MINUTE, waktu_kursus, @waktu_kursus)) < 100";
+                    if (!string.IsNullOrEmpty(idMapel))
                         {
                             query += " AND id_mapel != @id_mapel";
                         }
@@ -340,16 +345,16 @@
                         // Validasi waktu kursus (14:00 - 21:00 doangg)
                         if (!TimeSpan.TryParse(txtWaktukursus.Text.Trim(), out TimeSpan waktuKursus))
                         {
-                            lblMessageMapel.Text = "Format waktu tidak valid! Gunakan format HH:mm (misalnya 14:30).";
+                            lblMessageMapel.Text = "Format waktu tidak valid! Gunakan format hh:mm (misalnya 14:30).";
                             return;
                         }
 
                         TimeSpan batasBawah = new TimeSpan(14, 0, 0); // jam 14:00
-                        TimeSpan batasAtas = new TimeSpan(21, 0, 0);  // jam 21:00
+                        TimeSpan batasAtas = new TimeSpan(19, 20, 0);  // jam 19:20 batas trakhir ngajar
 
                         if (waktuKursus < batasBawah || waktuKursus > batasAtas)
                         {
-                            lblMessageMapel.Text = "Waktu kursus hanya boleh antara jam 14:00 sampai 21:00 dan gunakan format mm:yy!";
+                            lblMessageMapel.Text = "Batas mengajar dari jam 14:00 sampai 19:20 dan gunakan format hh:mm!";
                             return;
                         }
 
@@ -358,7 +363,7 @@
 
                         if (!long.TryParse(hargaStr, out long harga))
                         {
-                            lblMessageMapel.Text = "Harga harus berupa angka tanpa simbol mata uang, gunakan titik sebagai pemisah ribuan!";
+                            lblMessageMapel.Text = "Harga harus berupa angka tanpa simbol mata uang!";
                             return;
                         }
 
@@ -386,7 +391,7 @@
                             cmd.Parameters.AddWithValue("@durasi", cbDurasi.SelectedItem.ToString());
                             cmd.Parameters.AddWithValue("@hari_kursus", cbHariKursus.SelectedItem.ToString());
                             cmd.Parameters.AddWithValue("@waktu_kursus", txtWaktukursus.Text.Trim());
-                            cmd.Parameters.AddWithValue("@harga", txtHarga.Text.Trim());
+                            cmd.Parameters.AddWithValue("@harga", harga);
                             cmd.Parameters.AddWithValue("@id_tutor", txtIDTutor.Text.Trim());
 
                             int rowsAffected = cmd.ExecuteNonQuery();
@@ -405,13 +410,21 @@
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         transaction?.Rollback();
-                        lblMessageMapel.Text = "Error: " + ex.Message;
+
+                        if (ex.Number == 2627 || ex.Number == 2601)
+                        {
+                            lblMessageMapel.Text = "ID Mapel sudah terdaftar! Gunakan ID yang berbeda.";
+                        }
+                        else
+                        {
+                            lblMessageMapel.Text = "Terjadi error SQL: " + ex.Message;
+                        }
                     }
-                }
             }
+        }
 
             private void btnHapusMapel_Click(object sender, EventArgs e)
             {
@@ -539,16 +552,16 @@
                         // val jam nya / waktu kursus
                         if (!TimeSpan.TryParse(txtWaktukursus.Text.Trim(), out TimeSpan waktuKursus))
                         {
-                            lblMessageMapel.Text = "Format waktu tidak valid! Gunakan format HH:mm (misalnya 14:30).";
+                            lblMessageMapel.Text = "Format waktu tidak valid! Gunakan format hh:mm (misalnya 14:30).";
                             return;
                         }
 
                         TimeSpan batasBawah = new TimeSpan(14, 0, 0);
-                        TimeSpan batasAtas = new TimeSpan(21, 0, 0);
+                        TimeSpan batasAtas = new TimeSpan(19, 20, 0);
 
                         if (waktuKursus < batasBawah || waktuKursus > batasAtas)
                         {
-                            lblMessageMapel.Text = "Waktu kursus hanya boleh antara jam 14:00 sampai 21:00 dan gunakan format mm:yy!";
+                            lblMessageMapel.Text = "Batas mengajar dari jam 14:00 sampai 19:20 dan gunakan format hh:mm!";
                             return;
                         }
 
@@ -556,7 +569,7 @@
                         string hargaStr = txtHarga.Text.Trim().Replace(".", "");
                         if (!long.TryParse(hargaStr, out long harga))
                         {
-                            lblMessageMapel.Text = "Harga harus berupa angka tanpa simbol mata uang, titik maupun koma!!";
+                            lblMessageMapel.Text = "Harga harus berupa angka tanpa simbol mata uang!";
                             return;
                         }
 
@@ -584,23 +597,26 @@
                                 cmd.Parameters.AddWithValue("@durasi", cbDurasi.SelectedItem.ToString());
                                 cmd.Parameters.AddWithValue("@hari_kursus", cbHariKursus.SelectedItem.ToString());
                                 cmd.Parameters.AddWithValue("@waktu_kursus", txtWaktukursus.Text.Trim());
-                                cmd.Parameters.AddWithValue("@harga", txtHarga.Text.Trim());
+                                cmd.Parameters.AddWithValue("@harga", harga);
                                 cmd.Parameters.AddWithValue("@id_tutor", txtIDTutor.Text.Trim());
                                 cmd.Parameters.AddWithValue("@id_mapel", txtIDmapel.Text.Trim());
 
                                 int rowsAffected = cmd.ExecuteNonQuery();
+    
+
                                 if (rowsAffected > 0)
                                 {
-                                    transaction.Commit();
-                                    cache.Remove(CacheKey);
-                                    lblMessageMapel.Text = "Perubahan berhasil disimpan!";
-                                    LoadData();
-                                    ClearMapel();
+                                        transaction.Commit();
+                                        cache.Remove(CacheKey);
+                                        lblMessageMapel.Text = "Perubahan berhasil disimpan!";
+                                        LoadData();
+                                        ClearMapel();
                                 }
+
                                 else
                                 {
                                     transaction.Rollback();
-                                    lblMessageMapel.Text = "Gagal menyimpan perubahan!";
+                                    lblMessageMapel.Text = "ID Mapel tidak ditemukan";
                                 }
                             }
                         }
@@ -611,8 +627,9 @@
                     }
                     catch (Exception ex)
                     {
-                        transaction?.Rollback(); 
-                        lblMessageMapel.Text = "Error: " + ex.Message;
+                        transaction?.Rollback();
+                        lblMessageMapel.Text = "Terjadi error SQL: " + ex.Message;
+
                     }
                 }
             }
