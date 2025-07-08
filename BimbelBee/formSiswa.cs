@@ -156,13 +156,19 @@ namespace BimbelBee
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$"))
             {
-                lblMessageSiswa.Text = "Nama hanya boleh berisi huruf dan spasi!";
+                lblMessageSiswa.Text = "Nama hanya boleh berisi huruf dan tanpa spasi!";
                 return;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,15}$"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,13}$"))
             {
-                lblMessageSiswa.Text = "No Telepon harus berupa angka dan minimal 10 digit!";
+                lblMessageSiswa.Text = "No Telepon harus berupa angka dan terdiri dari 10-13 digit!";
+                return;
+            }
+
+            if (!noTelp.StartsWith("08"))
+            {
+                lblMessageSiswa.Text = "No Telepon harus diawali dengan '08'!";
                 return;
             }
 
@@ -300,7 +306,7 @@ namespace BimbelBee
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(nisn, @"^\d{10}$") ||
                 !System.Text.RegularExpressions.Regex.IsMatch(nama, @"^[a-zA-Z\s]+$") ||
-                !System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,15}$") ||
+                !System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^\d{10,13}$") ||
                 !System.Text.RegularExpressions.Regex.IsMatch(email, @"^[^@\s]+@gmail\.com$"))
             {
                 lblMessageSiswa.Text = "Validasi input gagal!";
