@@ -347,6 +347,34 @@ namespace BimbelBee
 
                     conn.Open();
 
+                    // Ambil email lama dari DB
+                    string emailLama = "";
+                    using (SqlCommand getEmailCmd = new SqlCommand("SELECT email FROM siswa WHERE nisn = @nisn", conn))
+                    {
+                        getEmailCmd.Parameters.AddWithValue("@nisn", nisn);
+                        object result = getEmailCmd.ExecuteScalar();
+                        if (result != null)
+                            emailLama = result.ToString();
+                    }
+
+                    // Cek jika email berubah
+                    if (!email.Equals(emailLama, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Cek apakah email baru sudah digunakan siswa lain
+                        using (SqlCommand checkEmailCmd = new SqlCommand("SELECT COUNT(*) FROM siswa WHERE email = @Email AND nisn <> @nisn", conn))
+                        {
+                            checkEmailCmd.Parameters.AddWithValue("@Email", email);
+                            checkEmailCmd.Parameters.AddWithValue("@nisn", nisn);
+                            int emailCount = (int)checkEmailCmd.ExecuteScalar();
+
+                            if (emailCount > 0)
+                            {
+                                lblMessageSiswa.Text = "Email sudah digunakan siswa lain!";
+                                return;
+                            }
+                        }
+                    }
+
                     SqlTransaction transaction = conn.BeginTransaction();
 
                     try

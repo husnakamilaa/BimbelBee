@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="pendaftaranDataset" targetNamespace="http://tempuri.org/pendaftaranDataset.xsd" xmlns:mstns="http://tempuri.org/pendaftaranDataset.xsd" xmlns="http://tempuri.org/pendaftaranDataset.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+<xs:schema id="reportDataset9" targetNamespace="http://tempuri.org/reportDataset9.xsd" xmlns:mstns="http://tempuri.org/reportDataset9.xsd" xmlns="http://tempuri.org/reportDataset9.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
   <xs:annotation>
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
@@ -12,11 +12,11 @@
               <DbSource ConnectionRef="BIMBELBEEConnectionString (Settings)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
-                    <CommandText>SELECT s.nisn, s.nama AS nama_siswa, SUM(p.total_pembayaran) AS total_harga, p.tgl_daftar AS tanggal_pendaftaran
+                    <CommandText>SELECT s.nisn, s.nama AS nama_siswa, SUM(p.total_pembayaran) AS total_harga, p.tgl_daftar AS tanggal_pendaftaran, m.mapel AS daftar_mapel
 FROM   siswa AS s INNER JOIN
              pendaftaran AS p ON s.nisn = p.nisn INNER JOIN
              mapel AS m ON p.id_mapel = m.id_mapel
-GROUP BY s.nisn, s.notelp, s.nama, p.tgl_daftar
+GROUP BY s.nisn, s.nama, p.tgl_daftar, m.mapel
 ORDER BY tanggal_pendaftaran</CommandText>
                     <Parameters />
                   </DbCommand>
@@ -28,6 +28,7 @@ ORDER BY tanggal_pendaftaran</CommandText>
               <Mapping SourceColumn="nama_siswa" DataSetColumn="nama_siswa" />
               <Mapping SourceColumn="total_harga" DataSetColumn="total_harga" />
               <Mapping SourceColumn="tanggal_pendaftaran" DataSetColumn="tanggal_pendaftaran" />
+              <Mapping SourceColumn="daftar_mapel" DataSetColumn="daftar_mapel" />
             </Mappings>
             <Sources />
           </TableAdapter>
@@ -36,7 +37,7 @@ ORDER BY tanggal_pendaftaran</CommandText>
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="pendaftaranDataset" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="pendaftaranDataset" msprop:Generator_DataSetName="pendaftaranDataset">
+  <xs:element name="reportDataset9" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_UserDSName="reportDataset9" msprop:Generator_DataSetName="reportDataset9">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="DataTable1" msprop:Generator_RowEvHandlerName="DataTable1RowChangeEventHandler" msprop:Generator_RowDeletedName="DataTable1RowDeleted" msprop:Generator_RowDeletingName="DataTable1RowDeleting" msprop:Generator_RowEvArgName="DataTable1RowChangeEvent" msprop:Generator_TablePropName="DataTable1" msprop:Generator_RowChangedName="DataTable1RowChanged" msprop:Generator_RowChangingName="DataTable1RowChanging" msprop:Generator_TableClassName="DataTable1DataTable" msprop:Generator_RowClassName="DataTable1Row" msprop:Generator_TableVarName="tableDataTable1" msprop:Generator_UserTableName="DataTable1">
@@ -58,6 +59,13 @@ ORDER BY tanggal_pendaftaran</CommandText>
               </xs:element>
               <xs:element name="total_harga" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="total_harga" msprop:Generator_ColumnPropNameInTable="total_hargaColumn" msprop:Generator_ColumnVarNameInTable="columntotal_harga" msprop:Generator_UserColumnName="total_harga" type="xs:int" minOccurs="0" />
               <xs:element name="tanggal_pendaftaran" msprop:Generator_ColumnPropNameInRow="tanggal_pendaftaran" msprop:Generator_ColumnPropNameInTable="tanggal_pendaftaranColumn" msprop:Generator_ColumnVarNameInTable="columntanggal_pendaftaran" msprop:Generator_UserColumnName="tanggal_pendaftaran" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="daftar_mapel" msprop:Generator_ColumnPropNameInRow="daftar_mapel" msprop:Generator_ColumnPropNameInTable="daftar_mapelColumn" msprop:Generator_ColumnVarNameInTable="columndaftar_mapel" msprop:Generator_UserColumnName="daftar_mapel" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
             </xs:sequence>
           </xs:complexType>
         </xs:element>

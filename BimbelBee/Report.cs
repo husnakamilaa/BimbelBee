@@ -38,14 +38,17 @@ namespace BimbelBee
             //string connectionString = "Data Source=DESKTOP-7QP727C\\HUSNAKAMILA;Initial Catalog=BIMBELBEE;Integrated Security=True";
             string query = @"
                 SELECT
-                    s.nisn,
-                    s.nama AS nama_siswa,
-                    SUM(p.total_pembayaran) AS total_harga,
-                    p.tgl_daftar AS tanggal_pendaftaran
+                  s.nisn,
+                  s.nama AS nama_siswa,
+                  STRING_AGG(m.mapel, ', ') WITHIN GROUP (ORDER BY m.mapel) AS daftar_mapel,
+                  SUM(p.total_pembayaran) AS total_harga,
+                  p.tgl_daftar AS tanggal_pendaftaran
                 FROM
                     siswa s
                 JOIN
                     pendaftaran p ON s.nisn = p.nisn
+                JOIN
+                    mapel m ON p.id_mapel = m.id_mapel
                 GROUP BY
                     s.nisn, s.nama, p.tgl_daftar
                 ORDER BY
@@ -59,7 +62,7 @@ namespace BimbelBee
                 da.Fill(dt);
             }
 
-            ReportDataSource rds = new ReportDataSource("DataSet7", dt);
+            ReportDataSource rds = new ReportDataSource("DataSet9", dt);
 
             reportViewer1.LocalReport.DataSources.Clear();
             reportViewer1.LocalReport.DataSources.Add(rds);

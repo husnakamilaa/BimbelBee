@@ -20,9 +20,9 @@ namespace BimbelBee {
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
-    [global::System.Xml.Serialization.XmlRootAttribute("daftarDataset3")]
+    [global::System.Xml.Serialization.XmlRootAttribute("reportDataset9")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
-    public partial class daftarDataset3 : global::System.Data.DataSet {
+    public partial class reportDataset9 : global::System.Data.DataSet {
         
         private DataTable1DataTable tableDataTable1;
         
@@ -30,7 +30,7 @@ namespace BimbelBee {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public daftarDataset3() {
+        public reportDataset9() {
             this.BeginInit();
             this.InitClass();
             global::System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new global::System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
@@ -41,7 +41,7 @@ namespace BimbelBee {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        protected daftarDataset3(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+        protected reportDataset9(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
             if ((this.IsBinarySerialized(info, context) == true)) {
                 this.InitVars(false);
@@ -127,7 +127,7 @@ namespace BimbelBee {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public override global::System.Data.DataSet Clone() {
-            daftarDataset3 cln = ((daftarDataset3)(base.Clone()));
+            reportDataset9 cln = ((reportDataset9)(base.Clone()));
             cln.InitVars();
             cln.SchemaSerializationMode = this.SchemaSerializationMode;
             return cln;
@@ -199,9 +199,9 @@ namespace BimbelBee {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         private void InitClass() {
-            this.DataSetName = "daftarDataset3";
+            this.DataSetName = "reportDataset9";
             this.Prefix = "";
-            this.Namespace = "http://tempuri.org/daftarDataset3.xsd";
+            this.Namespace = "http://tempuri.org/reportDataset9.xsd";
             this.EnforceConstraints = true;
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
             this.tableDataTable1 = new DataTable1DataTable();
@@ -225,7 +225,7 @@ namespace BimbelBee {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-            daftarDataset3 ds = new daftarDataset3();
+            reportDataset9 ds = new reportDataset9();
             global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
             global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
             global::System.Xml.Schema.XmlSchemaAny any = new global::System.Xml.Schema.XmlSchemaAny();
@@ -286,6 +286,8 @@ namespace BimbelBee {
             private global::System.Data.DataColumn columntotal_harga;
             
             private global::System.Data.DataColumn columntanggal_pendaftaran;
+            
+            private global::System.Data.DataColumn columndaftar_mapel;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
@@ -354,6 +356,14 @@ namespace BimbelBee {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn daftar_mapelColumn {
+                get {
+                    return this.columndaftar_mapel;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -389,13 +399,14 @@ namespace BimbelBee {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public DataTable1Row AddDataTable1Row(string nisn, string nama_siswa, int total_harga, System.DateTime tanggal_pendaftaran) {
+            public DataTable1Row AddDataTable1Row(string nisn, string nama_siswa, int total_harga, System.DateTime tanggal_pendaftaran, string daftar_mapel) {
                 DataTable1Row rowDataTable1Row = ((DataTable1Row)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         nisn,
                         nama_siswa,
                         total_harga,
-                        tanggal_pendaftaran};
+                        tanggal_pendaftaran,
+                        daftar_mapel};
                 rowDataTable1Row.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDataTable1Row);
                 return rowDataTable1Row;
@@ -429,6 +440,7 @@ namespace BimbelBee {
                 this.columnnama_siswa = base.Columns["nama_siswa"];
                 this.columntotal_harga = base.Columns["total_harga"];
                 this.columntanggal_pendaftaran = base.Columns["tanggal_pendaftaran"];
+                this.columndaftar_mapel = base.Columns["daftar_mapel"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -442,6 +454,8 @@ namespace BimbelBee {
                 base.Columns.Add(this.columntotal_harga);
                 this.columntanggal_pendaftaran = new global::System.Data.DataColumn("tanggal_pendaftaran", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columntanggal_pendaftaran);
+                this.columndaftar_mapel = new global::System.Data.DataColumn("daftar_mapel", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndaftar_mapel);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnnisn}, true));
                 this.columnnisn.AllowDBNull = false;
@@ -450,6 +464,7 @@ namespace BimbelBee {
                 this.columnnama_siswa.AllowDBNull = false;
                 this.columnnama_siswa.MaxLength = 50;
                 this.columntotal_harga.ReadOnly = true;
+                this.columndaftar_mapel.MaxLength = 25;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -517,7 +532,7 @@ namespace BimbelBee {
             public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
                 global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
                 global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                daftarDataset3 ds = new daftarDataset3();
+                reportDataset9 ds = new reportDataset9();
                 global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
                 any1.Namespace = "http://www.w3.org/2001/XMLSchema";
                 any1.MinOccurs = new decimal(0);
@@ -646,6 +661,22 @@ namespace BimbelBee {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string daftar_mapel {
+                get {
+                    try {
+                        return ((string)(this[this.tableDataTable1.daftar_mapelColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'daftar_mapel\' in table \'DataTable1\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDataTable1.daftar_mapelColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool Istotal_hargaNull() {
                 return this.IsNull(this.tableDataTable1.total_hargaColumn);
             }
@@ -666,6 +697,18 @@ namespace BimbelBee {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void Settanggal_pendaftaranNull() {
                 this[this.tableDataTable1.tanggal_pendaftaranColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool Isdaftar_mapelNull() {
+                return this.IsNull(this.tableDataTable1.daftar_mapelColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void Setdaftar_mapelNull() {
+                this[this.tableDataTable1.daftar_mapelColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -704,7 +747,7 @@ namespace BimbelBee {
         }
     }
 }
-namespace BimbelBee.daftarDataset3TableAdapters {
+namespace BimbelBee.reportDataset9TableAdapters {
     
     
     /// <summary>
@@ -832,6 +875,7 @@ namespace BimbelBee.daftarDataset3TableAdapters {
             tableMapping.ColumnMappings.Add("nama_siswa", "nama_siswa");
             tableMapping.ColumnMappings.Add("total_harga", "total_harga");
             tableMapping.ColumnMappings.Add("tanggal_pendaftaran", "tanggal_pendaftaran");
+            tableMapping.ColumnMappings.Add("daftar_mapel", "daftar_mapel");
             this._adapter.TableMappings.Add(tableMapping);
         }
         
@@ -848,10 +892,11 @@ namespace BimbelBee.daftarDataset3TableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = @"SELECT s.nisn, s.nama AS nama_siswa, SUM(p.total_pembayaran) AS total_harga, p.tgl_daftar AS tanggal_pendaftaran
+            this._commandCollection[0].CommandText = @"SELECT s.nisn, s.nama AS nama_siswa, SUM(p.total_pembayaran) AS total_harga, p.tgl_daftar AS tanggal_pendaftaran, m.mapel AS daftar_mapel
 FROM   siswa AS s INNER JOIN
-             pendaftaran AS p ON s.nisn = p.nisn
-GROUP BY s.nisn, s.nama, p.tgl_daftar
+             pendaftaran AS p ON s.nisn = p.nisn INNER JOIN
+             mapel AS m ON p.id_mapel = m.id_mapel
+GROUP BY s.nisn, s.nama, p.tgl_daftar, m.mapel
 ORDER BY tanggal_pendaftaran";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
@@ -860,7 +905,7 @@ ORDER BY tanggal_pendaftaran";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(daftarDataset3.DataTable1DataTable dataTable) {
+        public virtual int Fill(reportDataset9.DataTable1DataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -873,9 +918,9 @@ ORDER BY tanggal_pendaftaran";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual daftarDataset3.DataTable1DataTable GetData() {
+        public virtual reportDataset9.DataTable1DataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            daftarDataset3.DataTable1DataTable dataTable = new daftarDataset3.DataTable1DataTable();
+            reportDataset9.DataTable1DataTable dataTable = new reportDataset9.DataTable1DataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -949,7 +994,7 @@ ORDER BY tanggal_pendaftaran";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateUpdatedRows(daftarDataset3 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateUpdatedRows(reportDataset9 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -959,7 +1004,7 @@ ORDER BY tanggal_pendaftaran";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateInsertedRows(daftarDataset3 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
+        private int UpdateInsertedRows(reportDataset9 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allAddedRows) {
             int result = 0;
             return result;
         }
@@ -969,7 +1014,7 @@ ORDER BY tanggal_pendaftaran";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        private int UpdateDeletedRows(daftarDataset3 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
+        private int UpdateDeletedRows(reportDataset9 dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
             return result;
         }
@@ -1003,7 +1048,7 @@ ORDER BY tanggal_pendaftaran";
         ///</summary>
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-        public virtual int UpdateAll(daftarDataset3 dataSet) {
+        public virtual int UpdateAll(reportDataset9 dataSet) {
             if ((dataSet == null)) {
                 throw new global::System.ArgumentNullException("dataSet");
             }

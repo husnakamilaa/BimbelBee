@@ -66,16 +66,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="daftarDataset3.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>daftarDataset3.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="DaftarDataset6.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DaftarDataset6.xsd</DependentUpon>
-    </Compile>
     <Compile Include="dashboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,16 +102,6 @@
     <Compile Include="pendaftaran.Designer.cs">
       <DependentUpon>pendaftaran.cs</DependentUpon>
     </Compile>
-    <Compile Include="pendaftaranDataset.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>pendaftaranDataset.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="PendaftaranDataset5.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PendaftaranDataset5.xsd</DependentUpon>
-    </Compile>
     <Compile Include="pendaftaranDataSet7.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -135,10 +115,10 @@
     <Compile Include="Report.Designer.cs">
       <DependentUpon>Report.cs</DependentUpon>
     </Compile>
-    <Compile Include="reportDataset8.Designer.cs">
+    <Compile Include="reportDataset9.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>reportDataset8.xsd</DependentUpon>
+      <DependentUpon>reportDataset9.xsd</DependentUpon>
     </Compile>
     <Compile Include="Tutor.cs">
       <SubType>Form</SubType>
@@ -178,28 +158,6 @@
     <EmbeddedResource Include="Tutor.resx">
       <DependentUpon>Tutor.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="daftarDataset3.xsc">
-      <DependentUpon>daftarDataset3.xsd</DependentUpon>
-    </None>
-    <None Include="daftarDataset3.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>daftarDataset3.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="daftarDataset3.xss">
-      <DependentUpon>daftarDataset3.xsd</DependentUpon>
-    </None>
-    <None Include="DaftarDataset6.xsc">
-      <DependentUpon>DaftarDataset6.xsd</DependentUpon>
-    </None>
-    <None Include="DaftarDataset6.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>DaftarDataset6.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="DaftarDataset6.xss">
-      <DependentUpon>DaftarDataset6.xsd</DependentUpon>
-    </None>
     <None Include="historyDaftarDataset.xsc">
       <DependentUpon>historyDaftarDataset.xsd</DependentUpon>
     </None>
@@ -212,28 +170,6 @@
       <DependentUpon>historyDaftarDataset.xsd</DependentUpon>
     </None>
     <None Include="packages.config" />
-    <None Include="pendaftaranDataset.xsc">
-      <DependentUpon>pendaftaranDataset.xsd</DependentUpon>
-    </None>
-    <None Include="pendaftaranDataset.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>pendaftaranDataset.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="pendaftaranDataset.xss">
-      <DependentUpon>pendaftaranDataset.xsd</DependentUpon>
-    </None>
-    <None Include="PendaftaranDataset5.xsc">
-      <DependentUpon>PendaftaranDataset5.xsd</DependentUpon>
-    </None>
-    <None Include="PendaftaranDataset5.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PendaftaranDataset5.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="PendaftaranDataset5.xss">
-      <DependentUpon>PendaftaranDataset5.xsd</DependentUpon>
-    </None>
     <None Include="pendaftaranDataSet7.xsc">
       <DependentUpon>pendaftaranDataSet7.xsd</DependentUpon>
     </None>
@@ -259,16 +195,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="reportDataset8.xsc">
-      <DependentUpon>reportDataset8.xsd</DependentUpon>
+    <None Include="reportDataset9.xsc">
+      <DependentUpon>reportDataset9.xsd</DependentUpon>
     </None>
-    <None Include="reportDataset8.xsd">
+    <None Include="reportDataset9.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>reportDataset8.Designer.cs</LastGenOutput>
+      <LastGenOutput>reportDataset9.Designer.cs</LastGenOutput>
     </None>
-    <None Include="reportDataset8.xss">
-      <DependentUpon>reportDataset8.xsd</DependentUpon>
+    <None Include="reportDataset9.xss">
+      <DependentUpon>reportDataset9.xsd</DependentUpon>
     </None>
     <None Include="Resources\home kuning png.png" />
   </ItemGroup>
